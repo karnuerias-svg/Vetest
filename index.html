@@ -545,7 +545,7 @@
                                         </div>
                                     </div>
 
-                                    <textarea id="update-textarea-${log.id}-${index}" rows="1" placeholder="History (Hx) / ประวัติอาการ..." class="w-full text-[13px] font-medium text-gray-800 bg-gray-50 border border-gray-200 rounded-lg py-2.5 px-3 outline-none resize-none overflow-hidden placeholder:text-gray-400 mb-2 focus:border-cozy-green transition" oninput="this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px'">${updateText}</textarea>
+                                    <textarea id="update-textarea-${log.id}-${index}" rows="1" placeholder="History (Hx) / ประวัติอาการ..." class="w-full text-[13px] font-medium text-gray-800 bg-gray-50 border border-gray-200 rounded-lg py-2.5 px-3 outline-none resize-none overflow-hidden placeholder:text-gray-400 mb-2 focus:border-cozy-green focus:bg-white transition" oninput="this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px'">${updateText}</textarea>
                                     
                                     <div class="relative mb-2">
                                         <div class="absolute top-2.5 left-3 text-stone-400"><i class="ph-fill ph-stethoscope text-base"></i></div>
@@ -574,7 +574,7 @@
 
                                     <div class="relative mb-2">
                                         <div class="absolute top-2.5 left-3 text-rose-400/80"><i class="ph-fill ph-chat-circle-text text-base"></i></div>
-                                        <textarea id="update-ce-${log.id}-${index}" rows="1" placeholder="Client Education (CE) / คำแนะนำ..." class="w-full text-[13px] font-medium text-gray-800 bg-gray-50 border border-gray-200 rounded-lg py-2.5 pr-3 pl-9 outline-none resize-none overflow-hidden placeholder:text-rose-400 focus:border-rose-400 focus:bg-white" oninput="this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px'">${updateCe}</textarea>
+                                        <textarea id="update-ce-${log.id}-${index}" rows="1" placeholder="Client Education (CE) / คำแนะนำ..." class="w-full text-[13px] font-medium text-gray-800 bg-gray-50 border border-gray-200 rounded-lg py-2.5 pr-3 pl-9 outline-none resize-none overflow-hidden placeholder:text-gray-400 transition focus:border-rose-400 focus:bg-white" oninput="this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px'">${updateCe}</textarea>
                                     </div>
 
                                     <!-- Section กรอกค่าแล็บสำหรับแก้ไข -->
@@ -818,8 +818,8 @@
                                         
                                         <div class="flex items-center gap-1.5 w-full sm:w-auto flex-1">
                                             <input type="text" id="ai-context-${log.id}" placeholder="ระบุอาการให้ AI วิเคราะห์ประกอบ (เช่น ซึม, อ้วก)..." class="w-full sm:min-w-[220px] text-[11px] font-semibold px-2.5 py-1.5 border border-purple-200 bg-purple-50/50 rounded-md outline-none focus:border-purple-400 focus:bg-white text-purple-900 placeholder:text-purple-300 shadow-sm transition">
-                                            <label class="shrink-0 cursor-pointer text-purple-600 hover:text-purple-700 transition flex items-center gap-1.5 text-[11px] font-bold bg-purple-50 px-2.5 py-1.5 rounded-md border border-purple-200 hover:bg-white shadow-sm" title="ให้ AI ช่วยอ่านผลเลือด/ผลแล็บ">
-                                                <i class="ph-fill ph-magic-wand text-base"></i> วิเคราะห์ผล
+                                            <label id="ai-label-${log.id}" class="shrink-0 cursor-pointer text-purple-600 hover:text-purple-700 transition flex items-center gap-1.5 text-[11px] font-bold bg-purple-50 px-2.5 py-1.5 rounded-md border border-purple-200 hover:bg-white shadow-sm" title="ให้ AI ช่วยอ่านผลเลือด/ผลแล็บ">
+                                                <span id="ai-btn-text-${log.id}" class="flex items-center gap-1.5"><i class="ph-fill ph-magic-wand text-base"></i> วิเคราะห์ผล</span>
                                                 <input type="file" id="lab-upload-${log.id}" accept="image/*" class="hidden" onchange="window.handleLabAnalysis(event, '${log.id}')">
                                             </label>
                                         </div>
@@ -926,10 +926,21 @@
 
             const labBox = document.getElementById(`new-lab-${id}`);
             const originalText = labBox.value;
+            
+            // --- อัปเดต UX แจ้งเตือนสถานะโหลด ---
+            const aiBtnText = document.getElementById(`ai-btn-text-${id}`);
+            const aiLabel = document.getElementById(`ai-label-${id}`);
+            
+            if(aiBtnText) aiBtnText.innerHTML = '<i class="ph ph-spinner-gap animate-spin text-base"></i> กำลังอ่าน...';
+            if(aiLabel) aiLabel.classList.add('opacity-50', 'pointer-events-none');
+            
             labBox.value = "✨ AI กำลังวิเคราะห์ผลแล็บจากรูปภาพและอาการ... กรุณารอสักครู่...";
             labBox.disabled = true;
             labBox.style.height = 'auto';
             labBox.style.height = labBox.scrollHeight + 'px';
+
+            // บังคับให้เบราว์เซอร์รีเฟรชหน้าจอ (Repaint) ก่อนที่จะไปประมวลผลไฟล์หนักๆ
+            await new Promise(resolve => setTimeout(resolve, 50));
 
             try {
                 const base64Data = await new Promise((resolve, reject) => {
@@ -953,7 +964,6 @@
 
                 let result = null;
                 let lastError = null;
-                // อัปเกรดลำดับการทำงานให้เลือกใช้โมเดลรุ่นใหม่อย่าง 2.5 เป็นหลัก 100% ครับ
                 const modelsToTry = ["gemini-2.5-flash", "gemini-2.5-pro", "gemini-1.5-flash", "gemini-1.5-pro"];
 
                 for (const modelName of modelsToTry) {
@@ -970,12 +980,10 @@
 
                 const aiText = result.response.text();
                 labBox.value = (originalText ? originalText + "\n\n" : "") + aiText;
-                labBox.disabled = false;
                 
             } catch (error) {
                 console.error("AI Error:", error);
                 labBox.value = originalText; 
-                labBox.disabled = false; 
                 
                 let errorMsg = "เกิดข้อผิดพลาดในการวิเคราะห์ AI:\n";
                 if (error && error.message) {
@@ -989,8 +997,13 @@
                 }
                 alert(errorMsg);
             } finally {
+                labBox.disabled = false;
                 labBox.style.height = 'auto';
                 labBox.style.height = labBox.scrollHeight + 'px';
+                
+                // --- คืนค่าปุ่มกลับสู่ปกติ ---
+                if(aiBtnText) aiBtnText.innerHTML = '<i class="ph-fill ph-magic-wand text-base"></i> วิเคราะห์ผล';
+                if(aiLabel) aiLabel.classList.remove('opacity-50', 'pointer-events-none');
             }
         };
 
@@ -1040,7 +1053,6 @@
             }
         });
 
-        // ฟังก์ชันช่วยดึงค่าตัวเลข
         const getLabNum = (prefix, field, id) => {
             const el = document.getElementById(`${prefix}-${field}-${id}`);
             if (!el || el.value === '') return null;
@@ -1063,7 +1075,6 @@
             const labText = getVal('lab');
             const ceText = getVal('ce');
             
-            // ดึงค่าแล็บตัวเลข
             const ld_labDate = document.getElementById(`new-ld-labDate-${id}`) ? document.getElementById(`new-ld-labDate-${id}`).value : '';
             const ld_hct = getLabNum('new-ld', 'hct', id);
             const ld_mcv = getLabNum('new-ld', 'mcv', id);
@@ -1294,7 +1305,6 @@
             }
         };
 
-        // --- ระบบวาดกราฟ (Chart.js) ที่จัดเรียงใหม่ตามคำขอ ---
         window.openChartModal = function(id) {
             const log = petLogs.find(l => l.id === id);
             if (!log || !log.updates) return;
@@ -1378,7 +1388,6 @@
                 }
             };
 
-            // 1. RBC Chart (คุมโทนแดงไล่เฉด - Solid lines, no fill)
             const ctxRBC = document.getElementById('chart-rbc').getContext('2d');
             activeCharts.push(new Chart(ctxRBC, {
                 type: 'line',
@@ -1393,7 +1402,6 @@
                 options: commonOptions
             }));
 
-            // 2. WBC Chart (Mixed: Stacked Bar คุมโทนฟ้าไล่เฉด + เส้น WBC Total รวม)
             const ctxWBC = document.getElementById('chart-wbc').getContext('2d');
             activeCharts.push(new Chart(ctxWBC, {
                 data: {
@@ -1416,7 +1424,6 @@
                 }
             }));
 
-            // 3. PLT Chart (โทนฟ้าอมเขียว Cyan)
             const ctxPLT = document.getElementById('chart-plt').getContext('2d');
             activeCharts.push(new Chart(ctxPLT, {
                 type: 'line',
@@ -1435,7 +1442,6 @@
                 }
             }));
 
-            // 4. Liver Chart (คุมโทนเขียวไล่เฉด - Solid lines, no fill)
             const ctxLiver = document.getElementById('chart-liver').getContext('2d');
             activeCharts.push(new Chart(ctxLiver, {
                 type: 'line',
@@ -1456,7 +1462,6 @@
                 }
             }));
 
-            // 5. Kidney Chart (คุมโทนส้ม/เหลืองเทอราคอตตา - Dual Axis)
             const ctxKidney = document.getElementById('chart-kidney').getContext('2d');
             activeCharts.push(new Chart(ctxKidney, {
                 type: 'line',
