@@ -1284,20 +1284,20 @@
                 let html = '';
                 dayTasks.forEach(task => {
                     let typeIcon = task.type === 'preventive' ? '<i class="ph-fill ph-syringe text-teal-500"></i>' : '<i class="ph-fill ph-stethoscope text-purple-500"></i>';
-                    let timeStr = task.time ? `<span class="bg-gray-100 px-1.5 py-0.5 rounded text-gray-500 mr-1 font-semibold text-[10px] border border-gray-200">${task.time}</span>` : '';
+                    let timeStr = task.time ? `<span class="bg-gray-100 px-1.5 py-0.5 rounded text-gray-500 mr-1">${task.time}</span>` : '';
                     html += `
-                        <div onclick="window.closeGlobalAppointments(); window.openPatientProfile('${task.petId}');" class="flex justify-between items-center bg-white hover:bg-blue-50 p-3 rounded-xl border border-gray-200 cursor-pointer transition shadow-sm group">
+                        <div class="flex justify-between items-center bg-gray-50 p-3 rounded-lg border border-gray-100">
                             <div>
-                                <p class="text-sm font-bold text-gray-800 group-hover:text-blue-700 transition">${task.petName} <span class="text-[10px] text-gray-400 font-normal ml-1">(${task.petId})</span></p>
-                                <p class="text-xs text-gray-600 mt-1 flex items-center gap-1">${timeStr} ${typeIcon} <span class="font-medium">${task.reason}</span></p>
+                                <p class="text-sm font-bold text-gray-800">${task.petName} <span class="text-[10px] text-gray-400 font-normal">(${task.petId})</span></p>
+                                <p class="text-xs text-gray-600 mt-1 flex items-center gap-1">${timeStr} ${typeIcon} ${task.reason}</p>
                             </div>
-                            <div class="text-blue-500 bg-white rounded-full p-1.5 shadow-sm border border-blue-100 group-hover:bg-blue-600 group-hover:text-white transition-all flex items-center justify-center">
-                                <i class="ph-bold ph-caret-right text-sm"></i>
-                            </div>
+                            <button onclick="window.closeGlobalAppointments(); window.openPatientProfile('${task.petId}');" class="text-[10px] font-bold text-blue-600 hover:underline">
+                                แฟ้มประวัติ
+                            </button>
                         </div>
                     `;
                 });
-                listContainer.innerHTML = `<div class="flex flex-col gap-2 pb-2">${html}</div>`;
+                listContainer.innerHTML = html;
             }
             document.getElementById('calSelectedDayDetails').classList.remove('hidden');
         };
