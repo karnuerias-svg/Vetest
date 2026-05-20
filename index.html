@@ -54,7 +54,6 @@
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen">
 
-    <!-- Navbar -->
     <nav class="bg-cozy-green text-white sticky top-0 z-40 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
             <div class="flex items-center gap-2.5">
@@ -63,15 +62,10 @@
                 </div>
                 <h1 class="text-xl font-bold tracking-wide">Pet Health LogBook</h1>
             </div>
-            <div class="flex items-center gap-3">
-                <div class="text-white/90 text-sm hidden md:flex items-center gap-1.5 font-medium mr-2">
+            <div class="flex items-center gap-4">
+                <div class="text-white/90 text-sm hidden sm:flex items-center gap-1.5 font-medium">
                     <i class="ph ph-leaf text-lg text-white"></i> ระบบติดตามอาการสัตว์ป่วย
                 </div>
-                <!-- ปุ่มเปิดตารางนัดหมายรวม (Global Appointments) -->
-                <button onclick="window.openGlobalAppointments()" class="bg-blue-600/30 hover:bg-blue-600/50 p-2 rounded-lg transition shadow-sm border border-white/20 flex items-center gap-1.5" title="ดูตารางนัดหมายทั้งหมด">
-                    <i class="ph-bold ph-calendar text-lg text-white"></i>
-                    <span class="text-sm font-bold hidden sm:block text-white">ตารางนัด</span>
-                </button>
                 <button onclick="window.openSettings()" class="bg-white/20 p-2 rounded-lg hover:bg-white/30 transition shadow-sm border border-white/10" title="ตั้งค่า AI">
                     <i class="ph-fill ph-gear text-lg text-white"></i>
                 </button>
@@ -204,7 +198,7 @@
         </div>
     </div>
 
-    <!-- Patient Profile Modal (แฟ้มประวัติหลัก อัปเดตพร้อม Tab นัดหมาย) -->
+    <!-- Patient Profile Modal (แฟ้มประวัติหลัก อัปเดตใหม่) -->
     <div id="patientProfileModal" class="fixed inset-0 z-[80] hidden items-center justify-center bg-gray-900/80 backdrop-blur-sm transition-opacity">
         <div class="bg-gray-50 rounded-3xl w-full max-w-4xl max-h-[90vh] mx-4 shadow-2xl flex flex-col overflow-hidden">
             <div class="flex justify-between items-center p-5 border-b border-gray-200 bg-white shadow-sm z-10">
@@ -217,8 +211,7 @@
             <!-- Tabs -->
             <div class="flex gap-6 border-b border-gray-200 px-6 pt-3 bg-white">
                 <button onclick="window.switchProfileTab('history')" id="tab-history" class="pb-3 text-sm font-bold text-blue-600 border-b-2 border-blue-600 transition flex items-center gap-1.5"><i class="ph-bold ph-stethoscope"></i> ประวัติการรักษา</button>
-                <button onclick="window.switchProfileTab('preventive')" id="tab-preventive" class="pb-3 text-sm font-bold text-gray-500 border-b-2 border-transparent hover:text-gray-700 transition flex items-center gap-1.5"><i class="ph-bold ph-syringe"></i> วัคซีน & ป้องกัน</button>
-                <button onclick="window.switchProfileTab('appointment')" id="tab-appointment" class="pb-3 text-sm font-bold text-gray-500 border-b-2 border-transparent hover:text-gray-700 transition flex items-center gap-1.5"><i class="ph-bold ph-calendar-plus"></i> นัดหมาย</button>
+                <button onclick="window.switchProfileTab('preventive')" id="tab-preventive" class="pb-3 text-sm font-bold text-gray-500 border-b-2 border-transparent hover:text-gray-700 transition flex items-center gap-1.5"><i class="ph-bold ph-syringe"></i> วัคซีน & ป้องกันเห็บหมัด</button>
             </div>
 
             <div class="p-6 overflow-y-auto custom-scrollbar flex-1 flex flex-col gap-6">
@@ -237,96 +230,47 @@
 
                 <!-- View 2: วัคซีน & ป้องกันเห็บหมัด -->
                 <div id="view-preventive" class="hidden">
-                    <div class="bg-white border border-teal-200 rounded-2xl p-5 shadow-sm mb-6 relative overflow-hidden">
-                        <div class="absolute top-0 left-0 w-1 h-full bg-teal-500"></div>
-                        <h4 class="text-sm font-bold text-teal-700 mb-4 flex items-center gap-1.5"><i class="ph-fill ph-plus-circle text-lg"></i> บันทึกรายการป้องกันใหม่</h4>
+                    
+                    <!-- ฟอร์มเพิ่มประวัติวัคซีน -->
+                    <div class="bg-white border border-blue-200 rounded-2xl p-5 shadow-sm mb-6 relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                        <h4 class="text-sm font-bold text-blue-700 mb-4 flex items-center gap-1.5"><i class="ph-fill ph-plus-circle text-lg"></i> บันทึกรายการใหม่</h4>
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3 items-end">
                             <div class="md:col-span-1">
                                 <label class="block text-[10px] font-bold text-gray-500 mb-1">ประเภท</label>
-                                <select id="prev-type" class="w-full text-xs font-semibold px-2 py-2.5 border border-gray-300 rounded-lg outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 cursor-pointer">
+                                <select id="prev-type" class="w-full text-xs font-semibold px-2 py-2.5 border border-gray-300 rounded-lg outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 cursor-pointer">
                                     <option value="วัคซีนรวม">วัคซีนรวม</option>
                                     <option value="วัคซีนพิษสุนัขบ้า">วัคซีนพิษสุนัขบ้า</option>
-                                    <option value="วัคซีนลิวคีเมีย">วัคซีนลิวคีเมีย (Leukemia)</option> <!-- เพิ่มตัวเลือกนี้ -->
-                                    <option value="ป้องกันเห็บหมัด/พยาธิหนอนหัวใจ">ป้องกันเห็บหมัด/พยาธิ</option>
+                                    <option value="ป้องกันเห็บหมัด/พยาธิหนอนหัวใจ">ป้องกันเห็บหมัด/พยาธิหนอนหัวใจ</option>
                                     <option value="ถ่ายพยาธิลำไส้">ถ่ายพยาธิลำไส้</option>
                                     <option value="อื่นๆ">อื่นๆ</option>
                                 </select>
                             </div>
                             <div class="md:col-span-2">
                                 <label class="block text-[10px] font-bold text-gray-500 mb-1">รายการ / ยี่ห้อ</label>
-                                <input type="text" id="prev-name" placeholder="เช่น Bravecto, Nexgard, Vanguard..." class="w-full text-xs font-semibold px-3 py-2.5 border border-gray-300 rounded-lg outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500">
+                                <input type="text" id="prev-name" placeholder="เช่น Bravecto, Nexgard, Vanguard..." class="w-full text-xs font-semibold px-3 py-2.5 border border-gray-300 rounded-lg outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
                             </div>
                             <div class="md:col-span-1">
                                 <label class="block text-[10px] font-bold text-gray-500 mb-1">วันที่รับบริการ</label>
-                                <input type="date" id="prev-date" class="w-full text-xs font-semibold px-2 py-2.5 border border-gray-300 rounded-lg outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500">
+                                <input type="date" id="prev-date" class="w-full text-xs font-semibold px-2 py-2.5 border border-gray-300 rounded-lg outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
                             </div>
                             <div class="md:col-span-1">
-                                <label class="block text-[10px] font-bold text-gray-500 mb-1">นัดครั้งต่อไป</label>
-                                <input type="date" id="prev-next" class="w-full text-xs font-semibold px-2 py-2.5 border border-gray-300 rounded-lg outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500">
+                                <label class="block text-[10px] font-bold text-gray-500 mb-1">นัดหมายครั้งต่อไป</label>
+                                <input type="date" id="prev-next" class="w-full text-xs font-semibold px-2 py-2.5 border border-gray-300 rounded-lg outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
                             </div>
                         </div>
                         <div class="flex justify-end mt-4">
-                            <button id="btn-add-prev" onclick="window.addPreventive()" class="text-xs font-bold px-4 py-2.5 bg-teal-600 text-white hover:bg-teal-700 rounded-lg transition shadow-sm flex items-center gap-1.5"><i class="ph-bold ph-floppy-disk"></i> บันทึกรายการ</button>
+                            <button id="btn-add-prev" onclick="window.addPreventive()" class="text-xs font-bold px-4 py-2.5 bg-blue-600 text-white hover:bg-blue-700 rounded-lg transition shadow-sm flex items-center gap-1.5"><i class="ph-bold ph-floppy-disk"></i> บันทึกรายการ</button>
                         </div>
                     </div>
 
+                    <!-- ตารางแสดงผลประวัติวัคซีน -->
                     <h4 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-1.5 px-1"><i class="ph-fill ph-list-dashes text-teal-500 text-lg"></i> ประวัติวัคซีนและยาป้องกันทั้งหมด</h4>
-                    <div id="preventiveTableContainer"></div>
-                </div>
-
-                <!-- View 3: ระบบนัดหมาย (Appointments) -->
-                <div id="view-appointment" class="hidden">
-                    <div class="bg-white border border-purple-200 rounded-2xl p-5 shadow-sm mb-6 relative overflow-hidden">
-                        <div class="absolute top-0 left-0 w-1 h-full bg-purple-500"></div>
-                        <h4 class="text-sm font-bold text-purple-700 mb-4 flex items-center gap-1.5"><i class="ph-fill ph-plus-circle text-lg"></i> ลงคิวนัดหมายใหม่</h4>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 items-end">
-                            <div class="md:col-span-1">
-                                <label class="block text-[10px] font-bold text-gray-500 mb-1">วันที่นัดหมาย</label>
-                                <input type="date" id="apt-date" class="w-full text-xs font-semibold px-2 py-2.5 border border-gray-300 rounded-lg outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500">
-                            </div>
-                            <div class="md:col-span-1">
-                                <label class="block text-[10px] font-bold text-gray-500 mb-1">เวลา (ตัวเลือก)</label>
-                                <input type="time" id="apt-time" class="w-full text-xs font-semibold px-2 py-2.5 border border-gray-300 rounded-lg outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500">
-                            </div>
-                            <div class="md:col-span-2">
-                                <label class="block text-[10px] font-bold text-gray-500 mb-1">สาเหตุการนัด (เช่น ดูอาการ, ผ่าตัด, ทำแผล)</label>
-                                <input type="text" id="apt-reason" placeholder="ระบุสาเหตุ..." class="w-full text-xs font-semibold px-3 py-2.5 border border-gray-300 rounded-lg outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500">
-                            </div>
-                        </div>
-                        <div class="flex justify-end mt-4">
-                            <button id="btn-add-apt" onclick="window.addAppointment()" class="text-xs font-bold px-4 py-2.5 bg-purple-600 text-white hover:bg-purple-700 rounded-lg transition shadow-sm flex items-center gap-1.5"><i class="ph-bold ph-floppy-disk"></i> บันทึกนัดหมาย</button>
-                        </div>
-                    </div>
-
-                    <h4 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-1.5 px-1"><i class="ph-fill ph-list-dashes text-purple-500 text-lg"></i> รายการนัดหมายของเคสนี้</h4>
-                    <div id="appointmentTableContainer"></div>
-                </div>
-
-            </div>
-        </div>
-    </div>
-
-    <!-- Global Appointment Modal (ตารางนัดหมายรวมของคลินิก) -->
-    <div id="globalAppointmentModal" class="fixed inset-0 z-[90] hidden items-center justify-center bg-gray-900/80 backdrop-blur-sm transition-opacity">
-        <div class="bg-gray-50 rounded-3xl w-full max-w-5xl max-h-[90vh] mx-4 shadow-2xl flex flex-col overflow-hidden">
-            <div class="flex justify-between items-center p-5 border-b border-gray-200 bg-white">
-                <div class="flex items-center gap-3">
-                    <div class="bg-blue-50 p-2 rounded-xl border border-blue-100">
-                        <i class="ph-fill ph-calendar text-blue-600 text-2xl"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-gray-800">ตารางนัดหมายคลินิกทั้งหมด</h3>
-                        <p class="text-[11px] font-semibold text-gray-500">รวมทั้งรายการนัดตรวจและนัดวัคซีน/ป้องกันเห็บหมัด</p>
+                    <div id="preventiveTableContainer">
+                        <!-- Table render by JS -->
                     </div>
                 </div>
-                <button onclick="window.closeGlobalAppointments()" class="text-gray-400 hover:text-red-500 bg-gray-50 rounded-full p-2 border border-gray-200 transition shadow-sm">
-                    <i class="ph ph-x text-lg"></i>
-                </button>
-            </div>
-            <div class="p-6 overflow-y-auto custom-scrollbar flex-1 bg-gray-50">
-                <div id="globalAppointmentList">
-                    <div class="text-center text-gray-400 py-10"><i class="ph ph-spinner-gap animate-spin text-3xl"></i></div>
-                </div>
+
             </div>
         </div>
     </div>
@@ -450,6 +394,7 @@
         const auth = getAuth(app);
         const logsRef = collection(db, 'clinics', 'my-clinic', 'petLogs');
 
+        // Global Variables
         window.allClinicLogs = [];
         let petLogs = [];
         let logIdToDelete = null;
@@ -458,7 +403,6 @@
         
         window.currentProfilePetId = null;
         window.currentPetPreventives = [];
-        window.currentPetAppointments = [];
 
         const form = document.getElementById('logForm');
         const logsContainer = document.getElementById('logsContainer');
@@ -490,6 +434,7 @@
             logsContainer.innerHTML = '';
 
             try {
+                // ดึงข้อมูลทั้งหมด 1 ครั้ง เพื่อลด Quota การ Read ในการเสิร์ชโปรไฟล์
                 const snapshot = await getDocs(query(logsRef));
                 const allLogs = [];
                 snapshot.forEach((doc) => {
@@ -551,7 +496,7 @@
             return ageStr.join(' ');
         }
 
-        // --- ค้นหาอัตโนมัติ ---
+        // --- ระบบค้นหาและเติมข้อมูลอัตโนมัติ (Auto-fill) ---
         window.searchExistingPet = function() {
             const pidInput = document.getElementById('petId');
             const pid = pidInput.value.trim();
@@ -567,6 +512,7 @@
             statusEl.className = "text-[10px] font-bold mt-1 block text-blue-500 animate-pulse";
 
             setTimeout(() => {
+                // ค้นหาในประวัติทั้งหมดที่โหลดมาแล้ว (ไม่เสีย Quota Read เพิ่ม)
                 const matches = window.allClinicLogs.filter(l => l.petId === pid).sort((a,b) => {
                     if (a.date !== b.date) return new Date(b.date) - new Date(a.date);
                     return new Date(b.createdAt) - new Date(a.createdAt);
@@ -593,23 +539,27 @@
 
         // --- ระบบสลับ Tab ในหน้า Master Record ---
         window.switchProfileTab = function(tab) {
-            const tabs = ['history', 'preventive', 'appointment'];
-            tabs.forEach(t => {
-                const btn = document.getElementById(`tab-${t}`);
-                const view = document.getElementById(`view-${t}`);
-                if (t === tab) {
-                    view.classList.remove('hidden');
-                    if(t === 'history') btn.className = "pb-3 text-sm font-bold text-blue-600 border-b-2 border-blue-600 transition flex items-center gap-1.5";
-                    else if(t === 'preventive') btn.className = "pb-3 text-sm font-bold text-teal-600 border-b-2 border-teal-600 transition flex items-center gap-1.5";
-                    else btn.className = "pb-3 text-sm font-bold text-purple-600 border-b-2 border-purple-600 transition flex items-center gap-1.5";
-                } else {
-                    view.classList.add('hidden');
-                    btn.className = "pb-3 text-sm font-bold text-gray-500 border-b-2 border-transparent hover:text-gray-700 transition flex items-center gap-1.5";
-                }
-            });
+            const tabHistoryBtn = document.getElementById('tab-history');
+            const tabPreventiveBtn = document.getElementById('tab-preventive');
+            const viewHistory = document.getElementById('view-history');
+            const viewPreventive = document.getElementById('view-preventive');
+
+            if(tab === 'history') {
+                viewHistory.classList.remove('hidden');
+                viewPreventive.classList.add('hidden');
+                
+                tabHistoryBtn.className = "pb-3 text-sm font-bold text-blue-600 border-b-2 border-blue-600 transition flex items-center gap-1.5";
+                tabPreventiveBtn.className = "pb-3 text-sm font-bold text-gray-500 border-b-2 border-transparent hover:text-gray-700 transition flex items-center gap-1.5";
+            } else {
+                viewPreventive.classList.remove('hidden');
+                viewHistory.classList.add('hidden');
+                
+                tabPreventiveBtn.className = "pb-3 text-sm font-bold text-blue-600 border-b-2 border-blue-600 transition flex items-center gap-1.5";
+                tabHistoryBtn.className = "pb-3 text-sm font-bold text-gray-500 border-b-2 border-transparent hover:text-gray-700 transition flex items-center gap-1.5";
+            }
         };
 
-        // --- ระบบเปิดแฟ้มประวัติ (Master Record Modal) ---
+        // --- ระบบเปิดแฟ้มประวัติหลัก (Master Record Modal) ---
         window.openPatientProfile = async function(pid) {
             window.currentProfilePetId = pid;
             const matches = window.allClinicLogs.filter(l => l.petId === pid).sort((a,b) => {
@@ -620,6 +570,7 @@
             if(matches.length === 0) return;
             const petInfo = matches[0];
 
+            // 1. สร้าง Header
             const ageStr = petInfo.dob ? calculateAge(petInfo.dob) : 'ไม่ระบุ';
             let speciesIcon = 'ph-paw-print';
             let speciesColor = 'text-gray-500 bg-gray-100 border-gray-200';
@@ -647,6 +598,7 @@
             `;
             document.getElementById('profileHeaderContent').innerHTML = headerHtml;
 
+            // 2. สร้างประวัติ History Timeline
             let historyHtml = '';
             matches.forEach((visit) => {
                 const dateObj = new Date(visit.date);
@@ -681,30 +633,30 @@
             });
             document.getElementById('profileHistoryList').innerHTML = historyHtml;
 
+            // ตั้งค่าหน้าต่าง
             document.getElementById('prev-date').valueAsDate = new Date();
-            document.getElementById('apt-date').valueAsDate = new Date();
             window.switchProfileTab('history');
             
             const modal = document.getElementById('patientProfileModal');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
 
+            // 3. ดึงข้อมูล Preventive Care จากฐานข้อมูลสัตว์เลี้ยง
             try {
+                // เซฟแยก Collection ชื่อ pets โดยใช้ Document ID = รหัสสัตว์ป่วย
+                // ป้องกันปัญหา / ในรหัสสัตว์
                 const safePid = window.currentProfilePetId.replace(/\//g, '_'); 
                 const petDocRef = doc(db, 'clinics', 'my-clinic', 'pets', safePid);
                 const petSnap = await getDoc(petDocRef);
                 
                 if (petSnap.exists()) {
                     window.currentPetPreventives = petSnap.data().preventives || [];
-                    window.currentPetAppointments = petSnap.data().appointments || [];
                 } else {
                     window.currentPetPreventives = [];
-                    window.currentPetAppointments = [];
                 }
                 window.renderPreventives();
-                window.renderAppointments();
             } catch(e) { 
-                console.error("Error fetching pet details:", e); 
+                console.error("Error fetching preventives:", e); 
             }
         };
 
@@ -739,6 +691,7 @@
             try {
                 const safePid = window.currentProfilePetId.replace(/\//g, '_');
                 const petDocRef = doc(db, 'clinics', 'my-clinic', 'pets', safePid);
+                // ใช้ merge: true เพื่อไม่ให้ข้อมูลเดิมอย่างอื่น (ถ้ามีในอนาคต) หายไป
                 await setDoc(petDocRef, { preventives: window.currentPetPreventives }, { merge: true });
                 
                 document.getElementById('prev-name').value = '';
@@ -747,7 +700,7 @@
             } catch(e) {
                 console.error(e);
                 alert('เกิดข้อผิดพลาดในการบันทึกวัคซีน');
-                window.currentPetPreventives.pop(); 
+                window.currentPetPreventives.pop(); // rollback if error
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="ph-bold ph-floppy-disk"></i> บันทึกรายการ';
@@ -768,7 +721,7 @@
             } catch(e) {
                 console.error(e);
                 alert('ลบข้อมูลไม่สำเร็จ');
-                window.currentPetPreventives = prevCopy; 
+                window.currentPetPreventives = prevCopy; // rollback
             }
         };
 
@@ -778,11 +731,12 @@
                 container.innerHTML = `
                     <div class="flex flex-col items-center justify-center p-8 bg-gray-50 border border-gray-200 rounded-2xl border-dashed">
                         <i class="ph ph-syringe text-3xl text-gray-300 mb-2"></i>
-                        <p class="text-sm font-bold text-gray-400">ยังไม่มีประวัติวัคซีนหรือยาป้องกัน</p>
+                        <p class="text-sm font-bold text-gray-400">ยังไม่มีประวัติวัคซีนหรือยาป้องกันเห็บหมัด</p>
                     </div>`;
                 return;
             }
 
+            // เรียงวันที่ล่าสุดขึ้นบน
             const sorted = [...window.currentPetPreventives].sort((a,b) => new Date(b.date) - new Date(a.date));
             const today = new Date();
             today.setHours(0,0,0,0);
@@ -851,289 +805,6 @@
 
             html += `</tbody></table></div>`;
             container.innerHTML = html;
-        };
-
-        // --- ระบบเพิ่ม/ลบ ประวัตินัดหมาย (Appointments) ---
-        window.addAppointment = async function() {
-            const date = document.getElementById('apt-date').value;
-            const time = document.getElementById('apt-time').value;
-            const reason = document.getElementById('apt-reason').value.trim();
-
-            if(!date || !reason) return alert('กรุณาระบุวันที่และสาเหตุการนัดหมาย');
-
-            const btn = document.getElementById('btn-add-apt');
-            btn.disabled = true;
-            btn.innerHTML = '<i class="ph ph-spinner-gap animate-spin"></i> บันทึก...';
-
-            const newRecord = {
-                id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
-                date, time, reason,
-                createdAt: new Date().toISOString()
-            };
-
-            window.currentPetAppointments.push(newRecord);
-
-            try {
-                const safePid = window.currentProfilePetId.replace(/\//g, '_');
-                const petDocRef = doc(db, 'clinics', 'my-clinic', 'pets', safePid);
-                await setDoc(petDocRef, { appointments: window.currentPetAppointments }, { merge: true });
-                
-                document.getElementById('apt-reason').value = '';
-                document.getElementById('apt-time').value = '';
-                window.renderAppointments();
-            } catch(e) {
-                console.error(e);
-                alert('เกิดข้อผิดพลาดในการบันทึกนัดหมาย');
-                window.currentPetAppointments.pop(); 
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = '<i class="ph-bold ph-floppy-disk"></i> บันทึกนัดหมาย';
-            }
-        };
-
-        window.deleteAppointment = async function(id) {
-            if(!confirm('ต้องการลบประวัตินัดหมายนี้ ใช่หรือไม่?')) return;
-            
-            const prevCopy = [...window.currentPetAppointments];
-            window.currentPetAppointments = window.currentPetAppointments.filter(p => p.id !== id);
-            
-            try {
-                const safePid = window.currentProfilePetId.replace(/\//g, '_');
-                const petDocRef = doc(db, 'clinics', 'my-clinic', 'pets', safePid);
-                await setDoc(petDocRef, { appointments: window.currentPetAppointments }, { merge: true });
-                window.renderAppointments();
-            } catch(e) {
-                console.error(e);
-                alert('ลบข้อมูลไม่สำเร็จ');
-                window.currentPetAppointments = prevCopy; 
-            }
-        };
-
-        window.renderAppointments = function() {
-            const container = document.getElementById('appointmentTableContainer');
-            if(window.currentPetAppointments.length === 0) {
-                container.innerHTML = `
-                    <div class="flex flex-col items-center justify-center p-8 bg-gray-50 border border-gray-200 rounded-2xl border-dashed">
-                        <i class="ph ph-calendar-plus text-3xl text-gray-300 mb-2"></i>
-                        <p class="text-sm font-bold text-gray-400">ยังไม่มีประวัตินัดหมาย</p>
-                    </div>`;
-                return;
-            }
-
-            // เรียงวันที่นัดเร็วสุดขึ้นบน
-            const sorted = [...window.currentPetAppointments].sort((a,b) => new Date(a.date) - new Date(b.date));
-            const today = new Date();
-            today.setHours(0,0,0,0);
-
-            let html = `
-                <div class="overflow-x-auto rounded-xl border border-gray-200 shadow-sm">
-                <table class="w-full text-left text-sm whitespace-nowrap">
-                    <thead class="bg-gray-100 text-gray-600 border-b border-gray-200">
-                        <tr>
-                            <th class="px-4 py-3 font-bold">วันที่นัดหมาย</th>
-                            <th class="px-4 py-3 font-bold">เวลา</th>
-                            <th class="px-4 py-3 font-bold">สาเหตุ / รายการ</th>
-                            <th class="px-4 py-3 font-bold text-center w-10"></th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100 bg-white">
-            `;
-
-            sorted.forEach(p => {
-                const taskDate = new Date(p.date);
-                taskDate.setHours(0,0,0,0);
-                const diffTime = taskDate - today;
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-                let dateClass = "text-gray-700 font-semibold";
-                let dateBadge = "";
-                
-                if (diffDays < 0) {
-                    dateClass = "text-red-600 font-bold";
-                    dateBadge = `<span class="ml-2 text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded">เลยกำหนด</span>`;
-                } else if (diffDays === 0) {
-                    dateClass = "text-green-600 font-bold";
-                    dateBadge = `<span class="ml-2 text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded">วันนี้</span>`;
-                } else if (diffDays <= 7) {
-                    dateClass = "text-orange-500 font-bold";
-                    dateBadge = `<span class="ml-2 text-[10px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded">อีก ${diffDays} วัน</span>`;
-                }
-
-                const dDisplay = taskDate.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
-
-                html += `
-                    <tr class="hover:bg-gray-50 transition">
-                        <td class="px-4 py-3.5 ${dateClass}">${dDisplay}${dateBadge}</td>
-                        <td class="px-4 py-3.5 text-gray-500 font-medium">${p.time || '-'}</td>
-                        <td class="px-4 py-3.5 font-bold text-gray-800">${p.reason}</td>
-                        <td class="px-4 py-3.5 text-center">
-                            <button onclick="window.deleteAppointment('${p.id}')" class="text-gray-300 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-full transition border border-transparent hover:border-red-200" title="ลบรายการนี้">
-                                <i class="ph-bold ph-trash text-base"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            html += `</tbody></table></div>`;
-            container.innerHTML = html;
-        };
-
-        // --- ระบบตารางนัดหมายรวมของคลินิก (Global Appointments) ---
-        window.openGlobalAppointments = async function() {
-            const modal = document.getElementById('globalAppointmentModal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            
-            const listContainer = document.getElementById('globalAppointmentList');
-            listContainer.innerHTML = '<div class="text-center text-gray-400 py-10"><i class="ph ph-spinner-gap animate-spin text-3xl mb-2 text-blue-500"></i><p class="text-sm font-semibold">กำลังดึงข้อมูลนัดหมายคลินิก...</p></div>';
-
-            try {
-                // ดึงข้อมูลสัตว์ทุกตัวที่มีใน Collection 'pets'
-                const petsSnap = await getDocs(collection(db, 'clinics', 'my-clinic', 'pets'));
-                let allTasks = [];
-
-                petsSnap.forEach(doc => {
-                    const safePid = doc.id;
-                    const originalPid = safePid.replace(/_/g, '/'); // คืนค่า / กรณีที่มีใน ID
-                    const pData = doc.data();
-
-                    // หาชื่อและเบอร์โทรจาก allClinicLogs ที่โหลดไว้ตอนแรก
-                    let petName = 'ไม่ทราบชื่อ';
-                    let ownerPhone = '-';
-                    let species = '';
-                    const logMatch = window.allClinicLogs.find(l => l.petId === originalPid || l.petId.replace(/\//g, '_') === safePid);
-                    
-                    if(logMatch) {
-                        petName = logMatch.petName;
-                        ownerPhone = logMatch.ownerPhone;
-                        species = logMatch.species;
-                    }
-
-                    // ดึงนัดหมายทั่วไป
-                    if (pData.appointments) {
-                        pData.appointments.forEach(apt => {
-                            allTasks.push({
-                                type: 'appointment',
-                                date: apt.date,
-                                time: apt.time,
-                                reason: apt.reason,
-                                petId: originalPid, petName, ownerPhone, species
-                            });
-                        });
-                    }
-                    
-                    // ดึงนัดหมายวัคซีน (เอาเฉพาะที่มี nextDue)
-                    if (pData.preventives) {
-                        pData.preventives.forEach(prev => {
-                            if (prev.nextDue) {
-                                allTasks.push({
-                                    type: 'preventive',
-                                    date: prev.nextDue,
-                                    time: '',
-                                    reason: `นัด ${prev.type} (${prev.name})`,
-                                    petId: originalPid, petName, ownerPhone, species
-                                });
-                            }
-                        });
-                    }
-                });
-
-                const today = new Date();
-                today.setHours(0,0,0,0);
-
-                // เรียงลำดับวันที่ (อันที่ใกล้ถึง/เลยกำหนด ขึ้นก่อน)
-                allTasks.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-                if (allTasks.length === 0) {
-                    listContainer.innerHTML = `
-                        <div class="flex flex-col items-center justify-center p-12 bg-white border border-gray-200 rounded-2xl border-dashed">
-                            <div class="w-16 h-16 bg-blue-50 text-blue-300 rounded-full flex items-center justify-center mb-4"><i class="ph-fill ph-calendar-check text-3xl"></i></div>
-                            <h4 class="text-lg font-bold text-gray-800 mb-1">ยังไม่มีคิวนัดหมายในระบบ</h4>
-                            <p class="text-sm font-semibold text-gray-400">คุณสามารถลงคิวนัดหมายได้ที่แฟ้มประวัติสัตว์ป่วยแต่ละตัว</p>
-                        </div>`;
-                    return;
-                }
-
-                let html = `
-                    <div class="overflow-x-auto rounded-2xl border border-gray-200 shadow-sm bg-white">
-                    <table class="w-full text-left text-sm whitespace-nowrap">
-                        <thead class="bg-gray-100 text-gray-600 border-b border-gray-200">
-                            <tr>
-                                <th class="px-4 py-3.5 font-bold text-xs uppercase tracking-wider">วันที่นัด</th>
-                                <th class="px-4 py-3.5 font-bold text-xs uppercase tracking-wider">สัตว์ป่วย</th>
-                                <th class="px-4 py-3.5 font-bold text-xs uppercase tracking-wider">สาเหตุ / รายการ</th>
-                                <th class="px-4 py-3.5 font-bold text-xs uppercase tracking-wider">เบอร์ติดต่อ</th>
-                                <th class="px-4 py-3.5 font-bold text-xs uppercase tracking-wider text-center">จัดการ</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-100">
-                `;
-
-                allTasks.forEach(task => {
-                    const taskDate = new Date(task.date);
-                    taskDate.setHours(0,0,0,0);
-                    const diffTime = taskDate - today;
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-                    let dateClass = "text-gray-700 font-semibold";
-                    let dateBadge = "";
-                    let rowClass = "hover:bg-gray-50 transition";
-                    
-                    if (diffDays < 0) {
-                        dateClass = "text-red-600 font-bold";
-                        dateBadge = `<span class="ml-2 text-[10px] bg-red-100 text-red-600 px-1.5 py-0.5 rounded border border-red-200">เลยกำหนด</span>`;
-                        rowClass = "bg-red-50/30 hover:bg-red-50 transition";
-                    } else if (diffDays === 0) {
-                        dateClass = "text-green-600 font-bold";
-                        dateBadge = `<span class="ml-2 text-[10px] bg-green-100 text-green-700 px-1.5 py-0.5 rounded border border-green-200">วันนี้</span>`;
-                        rowClass = "bg-green-50/30 hover:bg-green-50 transition";
-                    } else if (diffDays <= 7) {
-                        dateClass = "text-orange-600 font-bold";
-                        dateBadge = `<span class="ml-2 text-[10px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded border border-orange-200">อีก ${diffDays} วัน</span>`;
-                    } else if (diffDays <= 14) {
-                        dateBadge = `<span class="ml-2 text-[10px] text-gray-400">อีก ${diffDays} วัน</span>`;
-                    }
-
-                    const dDisplay = taskDate.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
-                    const timeStr = task.time ? ` <span class="text-gray-400 text-xs ml-1">${task.time}</span>` : '';
-                    let typeIcon = task.type === 'preventive' ? '<i class="ph-fill ph-syringe text-teal-500"></i>' : '<i class="ph-fill ph-stethoscope text-purple-500"></i>';
-
-                    html += `
-                        <tr class="${rowClass}">
-                            <td class="px-4 py-4 ${dateClass}">${dDisplay}${timeStr}${dateBadge}</td>
-                            <td class="px-4 py-4">
-                                <div class="font-bold text-gray-800">${task.petName}</div>
-                                <div class="text-[10px] font-bold text-gray-400">ID: ${task.petId}</div>
-                            </td>
-                            <td class="px-4 py-4 font-semibold text-gray-700 flex items-center gap-1.5">${typeIcon} ${task.reason}</td>
-                            <td class="px-4 py-4 text-blue-600 font-semibold text-xs"><i class="ph-fill ph-phone"></i> ${task.ownerPhone}</td>
-                            <td class="px-4 py-4 text-center">
-                                <button onclick="window.closeGlobalAppointments(); window.openPatientProfile('${task.petId}');" class="text-[10px] font-bold text-blue-600 bg-blue-50 px-2.5 py-1.5 rounded-lg border border-blue-200 hover:bg-blue-100 transition shadow-sm">
-                                    เปิดแฟ้มประวัติ
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                });
-
-                html += `</tbody></table></div>`;
-                listContainer.innerHTML = html;
-
-            } catch (e) {
-                console.error("Error fetching global appointments:", e);
-                listContainer.innerHTML = `
-                    <div class="flex flex-col items-center justify-center p-12 bg-white border border-gray-200 rounded-2xl border-dashed">
-                        <div class="w-16 h-16 bg-red-50 text-red-300 rounded-full flex items-center justify-center mb-4"><i class="ph-fill ph-warning-circle text-3xl"></i></div>
-                        <h4 class="text-lg font-bold text-gray-800 mb-1">เกิดข้อผิดพลาดในการโหลดข้อมูล</h4>
-                        <p class="text-sm font-semibold text-gray-400">กรุณาลองใหม่อีกครั้ง หรือตรวจสอบการเชื่อมต่ออินเทอร์เน็ต</p>
-                    </div>`;
-            }
-        };
-
-        window.closeGlobalAppointments = function() {
-            document.getElementById('globalAppointmentModal').classList.remove('flex');
-            document.getElementById('globalAppointmentModal').classList.add('hidden');
         };
 
         // --- ส่วนของการวาด DOM หลัก ---
@@ -2111,13 +1782,21 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 spanGaps: true, 
-                interaction: { mode: 'index', intersect: false },
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
                 plugins: { 
                     legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, padding: 20, font: { family: 'Inter, Noto Sans Thai' } } },
                     tooltip: {
                         backgroundColor: 'rgba(255, 255, 255, 0.98)',
-                        titleColor: '#1f2937', bodyColor: '#4b5563', borderColor: '#e5e7eb',
-                        borderWidth: 1, padding: 12, boxPadding: 6, usePointStyle: true,
+                        titleColor: '#1f2937',
+                        bodyColor: '#4b5563',
+                        borderColor: '#e5e7eb',
+                        borderWidth: 1,
+                        padding: 12,
+                        boxPadding: 6,
+                        usePointStyle: true,
                         titleFont: { size: 13, family: 'Inter, Noto Sans Thai', weight: 'bold' },
                         bodyFont: { size: 12, family: 'Inter, Noto Sans Thai' }
                     }
