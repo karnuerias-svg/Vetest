@@ -50,6 +50,13 @@
         .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 8px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 8px; }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        /* สไตล์ปฏิทิน */
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 1px; background-color: #e5e7eb; border: 1px solid #e5e7eb; border-radius: 0.5rem; overflow: hidden; }
+        .calendar-cell { background-color: white; min-height: 80px; padding: 0.5rem; cursor: pointer; transition: background-color 0.2s; }
+        .calendar-cell:hover { background-color: #f8fafc; }
+        .calendar-cell.active { background-color: #eff6ff; }
+        .calendar-cell.other-month { background-color: #f9fafb; color: #9ca3af; }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 min-h-screen">
@@ -67,7 +74,6 @@
                 <div class="text-white/90 text-sm hidden md:flex items-center gap-1.5 font-medium mr-2">
                     <i class="ph ph-leaf text-lg text-white"></i> ระบบติดตามอาการสัตว์ป่วย
                 </div>
-                <!-- ปุ่มเปิดตารางนัดหมายรวม (Global Appointments) -->
                 <button onclick="window.openGlobalAppointments()" class="bg-blue-600/30 hover:bg-blue-600/50 p-2 rounded-lg transition shadow-sm border border-white/20 flex items-center gap-1.5" title="ดูตารางนัดหมายทั้งหมด">
                     <i class="ph-bold ph-calendar text-lg text-white"></i>
                     <span class="text-sm font-bold hidden sm:block text-white">ตารางนัด</span>
@@ -204,7 +210,7 @@
         </div>
     </div>
 
-    <!-- Patient Profile Modal (แฟ้มประวัติหลัก อัปเดตพร้อม Tab นัดหมาย) -->
+    <!-- Patient Profile Modal (แฟ้มประวัติหลัก) -->
     <div id="patientProfileModal" class="fixed inset-0 z-[80] hidden items-center justify-center bg-gray-900/80 backdrop-blur-sm transition-opacity">
         <div class="bg-gray-50 rounded-3xl w-full max-w-4xl max-h-[90vh] mx-4 shadow-2xl flex flex-col overflow-hidden">
             <div class="flex justify-between items-center p-5 border-b border-gray-200 bg-white shadow-sm z-10">
@@ -239,14 +245,14 @@
                 <div id="view-preventive" class="hidden">
                     <div class="bg-white border border-teal-200 rounded-2xl p-5 shadow-sm mb-6 relative overflow-hidden">
                         <div class="absolute top-0 left-0 w-1 h-full bg-teal-500"></div>
-                        <h4 class="text-sm font-bold text-teal-700 mb-4 flex items-center gap-1.5"><i class="ph-fill ph-plus-circle text-lg"></i> บันทึกรายการป้องกันใหม่</h4>
+                        <h4 class="text-sm font-bold text-teal-700 mb-4 flex items-center gap-1.5" id="prev-form-title"><i class="ph-fill ph-plus-circle text-lg"></i> บันทึกรายการป้องกันใหม่</h4>
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-3 items-end">
                             <div class="md:col-span-1">
                                 <label class="block text-[10px] font-bold text-gray-500 mb-1">ประเภท</label>
                                 <select id="prev-type" class="w-full text-xs font-semibold px-2 py-2.5 border border-gray-300 rounded-lg outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500 cursor-pointer">
                                     <option value="วัคซีนรวม">วัคซีนรวม</option>
                                     <option value="วัคซีนพิษสุนัขบ้า">วัคซีนพิษสุนัขบ้า</option>
-                                    <option value="วัคซีนลิวคีเมีย">วัคซีนลิวคีเมีย (Leukemia)</option> <!-- เพิ่มตัวเลือกนี้ -->
+                                    <option value="วัคซีนลิวคีเมีย">วัคซีนลิวคีเมีย (Leukemia)</option>
                                     <option value="ป้องกันเห็บหมัด/พยาธิหนอนหัวใจ">ป้องกันเห็บหมัด/พยาธิ</option>
                                     <option value="ถ่ายพยาธิลำไส้">ถ่ายพยาธิลำไส้</option>
                                     <option value="อื่นๆ">อื่นๆ</option>
@@ -265,8 +271,9 @@
                                 <input type="date" id="prev-next" class="w-full text-xs font-semibold px-2 py-2.5 border border-gray-300 rounded-lg outline-none focus:border-teal-500 focus:ring-1 focus:ring-teal-500">
                             </div>
                         </div>
-                        <div class="flex justify-end mt-4">
-                            <button id="btn-add-prev" onclick="window.addPreventive()" class="text-xs font-bold px-4 py-2.5 bg-teal-600 text-white hover:bg-teal-700 rounded-lg transition shadow-sm flex items-center gap-1.5"><i class="ph-bold ph-floppy-disk"></i> บันทึกรายการ</button>
+                        <div class="flex justify-end gap-2 mt-4">
+                            <button id="btn-cancel-prev" onclick="window.cancelEditPrev()" class="hidden text-xs font-bold px-4 py-2.5 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-lg transition shadow-sm">ยกเลิก</button>
+                            <button id="btn-add-prev" onclick="window.addPreventive()" class="text-xs font-bold px-4 py-2.5 bg-teal-600 text-white hover:bg-teal-700 rounded-lg transition shadow-sm flex items-center gap-1.5"><i class="ph-bold ph-plus"></i> เพิ่มรายการ</button>
                         </div>
                     </div>
 
@@ -278,7 +285,7 @@
                 <div id="view-appointment" class="hidden">
                     <div class="bg-white border border-purple-200 rounded-2xl p-5 shadow-sm mb-6 relative overflow-hidden">
                         <div class="absolute top-0 left-0 w-1 h-full bg-purple-500"></div>
-                        <h4 class="text-sm font-bold text-purple-700 mb-4 flex items-center gap-1.5"><i class="ph-fill ph-plus-circle text-lg"></i> ลงคิวนัดหมายใหม่</h4>
+                        <h4 class="text-sm font-bold text-purple-700 mb-4 flex items-center gap-1.5" id="apt-form-title"><i class="ph-fill ph-plus-circle text-lg"></i> ลงคิวนัดหมายใหม่</h4>
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 items-end">
                             <div class="md:col-span-1">
                                 <label class="block text-[10px] font-bold text-gray-500 mb-1">วันที่นัดหมาย</label>
@@ -293,8 +300,9 @@
                                 <input type="text" id="apt-reason" placeholder="ระบุสาเหตุ..." class="w-full text-xs font-semibold px-3 py-2.5 border border-gray-300 rounded-lg outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500">
                             </div>
                         </div>
-                        <div class="flex justify-end mt-4">
-                            <button id="btn-add-apt" onclick="window.addAppointment()" class="text-xs font-bold px-4 py-2.5 bg-purple-600 text-white hover:bg-purple-700 rounded-lg transition shadow-sm flex items-center gap-1.5"><i class="ph-bold ph-floppy-disk"></i> บันทึกนัดหมาย</button>
+                        <div class="flex justify-end gap-2 mt-4">
+                            <button id="btn-cancel-apt" onclick="window.cancelEditApt()" class="hidden text-xs font-bold px-4 py-2.5 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-lg transition shadow-sm">ยกเลิก</button>
+                            <button id="btn-add-apt" onclick="window.addAppointment()" class="text-xs font-bold px-4 py-2.5 bg-purple-600 text-white hover:bg-purple-700 rounded-lg transition shadow-sm flex items-center gap-1.5"><i class="ph-bold ph-plus"></i> เพิ่มนัดหมาย</button>
                         </div>
                     </div>
 
@@ -309,7 +317,7 @@
     <!-- Global Appointment Modal (ตารางนัดหมายรวมของคลินิก) -->
     <div id="globalAppointmentModal" class="fixed inset-0 z-[90] hidden items-center justify-center bg-gray-900/80 backdrop-blur-sm transition-opacity">
         <div class="bg-gray-50 rounded-3xl w-full max-w-5xl max-h-[90vh] mx-4 shadow-2xl flex flex-col overflow-hidden">
-            <div class="flex justify-between items-center p-5 border-b border-gray-200 bg-white">
+            <div class="flex justify-between items-center p-5 border-b border-gray-200 bg-white shadow-sm z-10">
                 <div class="flex items-center gap-3">
                     <div class="bg-blue-50 p-2 rounded-xl border border-blue-100">
                         <i class="ph-fill ph-calendar text-blue-600 text-2xl"></i>
@@ -319,13 +327,56 @@
                         <p class="text-[11px] font-semibold text-gray-500">รวมทั้งรายการนัดตรวจและนัดวัคซีน/ป้องกันเห็บหมัด</p>
                     </div>
                 </div>
-                <button onclick="window.closeGlobalAppointments()" class="text-gray-400 hover:text-red-500 bg-gray-50 rounded-full p-2 border border-gray-200 transition shadow-sm">
-                    <i class="ph ph-x text-lg"></i>
-                </button>
+                <div class="flex items-center gap-4">
+                    <div class="flex bg-gray-100 p-1 rounded-lg">
+                        <button id="btn-view-list" onclick="window.switchGlobalView('list')" class="px-4 py-1.5 bg-white shadow-sm rounded-md text-xs font-bold text-gray-800 transition">แบบรายการ</button>
+                        <button id="btn-view-cal" onclick="window.switchGlobalView('calendar')" class="px-4 py-1.5 text-gray-500 rounded-md text-xs font-bold hover:text-gray-800 transition">แบบปฏิทิน</button>
+                    </div>
+                    <button onclick="window.closeGlobalAppointments()" class="text-gray-400 hover:text-red-500 bg-gray-50 rounded-full p-2 border border-gray-200 transition shadow-sm">
+                        <i class="ph ph-x text-lg"></i>
+                    </button>
+                </div>
             </div>
-            <div class="p-6 overflow-y-auto custom-scrollbar flex-1 bg-gray-50">
+            
+            <div class="p-6 overflow-y-auto custom-scrollbar flex-1 bg-gray-50" id="globalViewContainer">
+                <!-- List View Content -->
                 <div id="globalAppointmentList">
                     <div class="text-center text-gray-400 py-10"><i class="ph ph-spinner-gap animate-spin text-3xl"></i></div>
+                </div>
+
+                <!-- Calendar View Content -->
+                <div id="globalCalendarContainer" class="hidden h-full flex flex-col gap-4">
+                    <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-gray-200 shadow-sm">
+                        <button onclick="window.changeCalMonth(-1)" class="p-2 hover:bg-gray-100 rounded-lg transition"><i class="ph-bold ph-caret-left text-gray-600"></i></button>
+                        <h3 id="calMonthYear" class="text-base font-bold text-gray-800">เดือน ปี</h3>
+                        <button onclick="window.changeCalMonth(1)" class="p-2 hover:bg-gray-100 rounded-lg transition"><i class="ph-bold ph-caret-right text-gray-600"></i></button>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden flex-1 flex flex-col">
+                        <div class="grid grid-cols-7 bg-gray-100 border-b border-gray-200 text-center py-2">
+                            <div class="text-xs font-bold text-red-500">อา.</div>
+                            <div class="text-xs font-bold text-gray-500">จ.</div>
+                            <div class="text-xs font-bold text-gray-500">อ.</div>
+                            <div class="text-xs font-bold text-gray-500">พ.</div>
+                            <div class="text-xs font-bold text-gray-500">พฤ.</div>
+                            <div class="text-xs font-bold text-gray-500">ศ.</div>
+                            <div class="text-xs font-bold text-blue-500">ส.</div>
+                        </div>
+                        <div id="calendarGrid" class="calendar-grid flex-1">
+                            <!-- JS generates cells here -->
+                        </div>
+                    </div>
+
+                    <!-- Selected Day Details -->
+                    <div id="calSelectedDayDetails" class="bg-white border border-blue-200 rounded-xl p-4 shadow-sm hidden">
+                        <div class="flex justify-between items-center mb-3 pb-2 border-b border-gray-100">
+                            <h4 id="calSelectedDateTitle" class="text-sm font-bold text-blue-700 flex items-center gap-1.5"><i class="ph-fill ph-calendar-star"></i> รายการนัดหมายวันที่ ...</h4>
+                            <button onclick="document.getElementById('calSelectedDayDetails').classList.add('hidden')" class="text-gray-400 hover:text-gray-600"><i class="ph ph-x"></i></button>
+                        </div>
+                        <div id="calSelectedTaskList" class="space-y-2 max-h-48 overflow-y-auto custom-scrollbar pr-2">
+                            <!-- JS generates task list for specific day -->
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -395,14 +446,14 @@
         </div>
     </div>
 
-    <!-- Delete Modal -->
+    <!-- Unified Custom Delete Modal -->
     <div id="deleteModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-gray-900/40 backdrop-blur-sm transition-opacity">
         <div class="bg-white rounded-3xl p-7 w-full max-w-sm mx-4 shadow-2xl transform scale-95 transition-transform duration-200" id="deleteModalContent">
             <div class="flex items-center justify-center w-14 h-14 rounded-full bg-red-50 mx-auto mb-4 border border-red-100">
                 <i class="ph-fill ph-warning-circle text-3xl text-red-500"></i>
             </div>
             <h3 id="deleteModalTitle" class="text-lg font-bold text-center text-gray-900 mb-2">ยืนยันการลบข้อมูล</h3>
-            <p id="deleteModalText" class="text-sm text-center text-gray-500 mb-7">คุณแน่ใจหรือไม่ว่าต้องการลบประวัตินี้?<br>ข้อมูลที่ลบจะไม่สามารถกู้คืนได้</p>
+            <p id="deleteModalText" class="text-sm text-center text-gray-500 mb-7">คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้?<br>ข้อมูลที่ลบจะไม่สามารถกู้คืนได้</p>
             <div class="flex gap-3">
                 <button onclick="window.closeDeleteModal()" class="flex-1 px-4 py-2.5 bg-white border border-gray-300 text-gray-700 font-bold rounded-xl hover:bg-gray-50 transition">ยกเลิก</button>
                 <button id="confirmDeleteBtn" class="flex-1 px-4 py-2.5 bg-red-500 text-white font-bold rounded-xl hover:bg-red-600 transition shadow-sm">ลบข้อมูล</button>
@@ -452,13 +503,24 @@
 
         window.allClinicLogs = [];
         let petLogs = [];
-        let logIdToDelete = null;
-        let updateIndexToDelete = null;
         let activeCharts = [];
         
         window.currentProfilePetId = null;
         window.currentPetPreventives = [];
         window.currentPetAppointments = [];
+
+        // ตัวแปรสำหรับ Delete Modal 
+        window.itemToDeleteType = null; // 'log', 'update', 'preventive', 'appointment'
+        window.idToDelete = null;
+        window.updateIndexToDelete = null;
+
+        // ตัวแปรสำหรับ Edit Mode
+        window.editingPrevId = null;
+        window.editingAptId = null;
+
+        // ตัวแปรสำหรับ Global Calendar
+        window.globalTasks = [];
+        window.currentCalDate = new Date();
 
         const form = document.getElementById('logForm');
         const logsContainer = document.getElementById('logsContainer');
@@ -551,7 +613,6 @@
             return ageStr.join(' ');
         }
 
-        // --- ค้นหาอัตโนมัติ ---
         window.searchExistingPet = function() {
             const pidInput = document.getElementById('petId');
             const pid = pidInput.value.trim();
@@ -591,7 +652,6 @@
             }, 300);
         };
 
-        // --- ระบบสลับ Tab ในหน้า Master Record ---
         window.switchProfileTab = function(tab) {
             const tabs = ['history', 'preventive', 'appointment'];
             tabs.forEach(t => {
@@ -607,9 +667,10 @@
                     btn.className = "pb-3 text-sm font-bold text-gray-500 border-b-2 border-transparent hover:text-gray-700 transition flex items-center gap-1.5";
                 }
             });
+            window.cancelEditPrev();
+            window.cancelEditApt();
         };
 
-        // --- ระบบเปิดแฟ้มประวัติ (Master Record Modal) ---
         window.openPatientProfile = async function(pid) {
             window.currentProfilePetId = pid;
             const matches = window.allClinicLogs.filter(l => l.petId === pid).sort((a,b) => {
@@ -713,9 +774,41 @@
             modal.classList.remove('flex');
             modal.classList.add('hidden');
             window.currentProfilePetId = null;
+            window.cancelEditPrev();
+            window.cancelEditApt();
         };
 
-        // --- ระบบเพิ่ม/ลบ ประวัติวัคซีน (Preventives) ---
+        // --- Preventive CRUD ---
+        window.cancelEditPrev = function() {
+            window.editingPrevId = null;
+            document.getElementById('prev-name').value = '';
+            document.getElementById('prev-next').value = '';
+            document.getElementById('prev-date').valueAsDate = new Date();
+            
+            const btn = document.getElementById('btn-add-prev');
+            btn.innerHTML = '<i class="ph-bold ph-plus"></i> เพิ่มรายการ';
+            btn.className = "text-xs font-bold px-4 py-2.5 bg-teal-600 text-white hover:bg-teal-700 rounded-lg transition shadow-sm flex items-center gap-1.5";
+            document.getElementById('btn-cancel-prev').classList.add('hidden');
+            document.getElementById('prev-form-title').innerHTML = '<i class="ph-fill ph-plus-circle text-lg"></i> บันทึกรายการป้องกันใหม่';
+        };
+
+        window.startEditPreventive = function(id) {
+            const p = window.currentPetPreventives.find(x => x.id === id);
+            if(!p) return;
+            
+            window.editingPrevId = id;
+            document.getElementById('prev-type').value = p.type;
+            document.getElementById('prev-name').value = p.name;
+            document.getElementById('prev-date').value = p.date;
+            document.getElementById('prev-next').value = p.nextDue || '';
+
+            const btn = document.getElementById('btn-add-prev');
+            btn.innerHTML = '<i class="ph-bold ph-floppy-disk"></i> บันทึกการแก้ไข';
+            btn.className = "text-xs font-bold px-4 py-2.5 bg-amber-500 text-white hover:bg-amber-600 rounded-lg transition shadow-sm flex items-center gap-1.5";
+            document.getElementById('btn-cancel-prev').classList.remove('hidden');
+            document.getElementById('prev-form-title').innerHTML = '<i class="ph-fill ph-pencil-simple text-lg text-amber-500"></i> แก้ไขรายการป้องกัน';
+        };
+
         window.addPreventive = async function() {
             const type = document.getElementById('prev-type').value;
             const name = document.getElementById('prev-name').value.trim();
@@ -725,50 +818,39 @@
             if(!name || !date) return alert('กรุณากรอกยี่ห้อและวันที่ทำ');
 
             const btn = document.getElementById('btn-add-prev');
+            const originalHtml = btn.innerHTML;
             btn.disabled = true;
             btn.innerHTML = '<i class="ph ph-spinner-gap animate-spin"></i> บันทึก...';
 
-            const newRecord = {
-                id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
-                type, name, date, nextDue,
-                createdAt: new Date().toISOString()
-            };
-
-            window.currentPetPreventives.push(newRecord);
+            let updatedList = [...window.currentPetPreventives];
+            
+            if(window.editingPrevId) {
+                const idx = updatedList.findIndex(x => x.id === window.editingPrevId);
+                if(idx !== -1) {
+                    updatedList[idx] = { ...updatedList[idx], type, name, date, nextDue };
+                }
+            } else {
+                updatedList.push({
+                    id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
+                    type, name, date, nextDue,
+                    createdAt: new Date().toISOString()
+                });
+            }
 
             try {
                 const safePid = window.currentProfilePetId.replace(/\//g, '_');
                 const petDocRef = doc(db, 'clinics', 'my-clinic', 'pets', safePid);
-                await setDoc(petDocRef, { preventives: window.currentPetPreventives }, { merge: true });
+                await setDoc(petDocRef, { preventives: updatedList }, { merge: true });
                 
-                document.getElementById('prev-name').value = '';
-                document.getElementById('prev-next').value = '';
+                window.currentPetPreventives = updatedList;
+                window.cancelEditPrev();
                 window.renderPreventives();
             } catch(e) {
                 console.error(e);
                 alert('เกิดข้อผิดพลาดในการบันทึกวัคซีน');
-                window.currentPetPreventives.pop(); 
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="ph-bold ph-floppy-disk"></i> บันทึกรายการ';
-            }
-        };
-
-        window.deletePreventive = async function(id) {
-            if(!confirm('ต้องการลบประวัติวัคซีน/ป้องกันรายการนี้ ใช่หรือไม่?')) return;
-            
-            const prevCopy = [...window.currentPetPreventives];
-            window.currentPetPreventives = window.currentPetPreventives.filter(p => p.id !== id);
-            
-            try {
-                const safePid = window.currentProfilePetId.replace(/\//g, '_');
-                const petDocRef = doc(db, 'clinics', 'my-clinic', 'pets', safePid);
-                await setDoc(petDocRef, { preventives: window.currentPetPreventives }, { merge: true });
-                window.renderPreventives();
-            } catch(e) {
-                console.error(e);
-                alert('ลบข้อมูลไม่สำเร็จ');
-                window.currentPetPreventives = prevCopy; 
+                if(!window.editingPrevId) btn.innerHTML = originalHtml; 
             }
         };
 
@@ -796,7 +878,7 @@
                             <th class="px-4 py-3 font-bold">ประเภท</th>
                             <th class="px-4 py-3 font-bold">รายการ / ยี่ห้อ</th>
                             <th class="px-4 py-3 font-bold">นัดครั้งต่อไป</th>
-                            <th class="px-4 py-3 font-bold text-center w-10"></th>
+                            <th class="px-4 py-3 font-bold text-center w-20">จัดการ</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 bg-white">
@@ -840,9 +922,12 @@
                         <td class="px-4 py-3.5">${typeBadge}</td>
                         <td class="px-4 py-3.5 font-bold text-gray-800">${p.name}</td>
                         <td class="px-4 py-3.5"><span class="flex items-center gap-1.5 w-fit ${statusClass}">${statusIcon}${nextDueDisplay}</span></td>
-                        <td class="px-4 py-3.5 text-center">
-                            <button onclick="window.deletePreventive('${p.id}')" class="text-gray-300 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-full transition border border-transparent hover:border-red-200" title="ลบรายการนี้">
-                                <i class="ph-bold ph-trash text-base"></i>
+                        <td class="px-4 py-3.5 text-center flex justify-center gap-1">
+                            <button onclick="window.startEditPreventive('${p.id}')" class="text-gray-400 hover:text-blue-500 hover:bg-blue-50 p-1.5 rounded-lg transition border border-transparent hover:border-blue-200" title="แก้ไข">
+                                <i class="ph-bold ph-pencil-simple text-sm"></i>
+                            </button>
+                            <button onclick="window.openDeleteModal('${p.id}', 'preventive')" class="text-gray-400 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-lg transition border border-transparent hover:border-red-200" title="ลบรายการนี้">
+                                <i class="ph-bold ph-trash text-sm"></i>
                             </button>
                         </td>
                     </tr>
@@ -853,7 +938,36 @@
             container.innerHTML = html;
         };
 
-        // --- ระบบเพิ่ม/ลบ ประวัตินัดหมาย (Appointments) ---
+        // --- Appointment CRUD ---
+        window.cancelEditApt = function() {
+            window.editingAptId = null;
+            document.getElementById('apt-reason').value = '';
+            document.getElementById('apt-time').value = '';
+            document.getElementById('apt-date').valueAsDate = new Date();
+            
+            const btn = document.getElementById('btn-add-apt');
+            btn.innerHTML = '<i class="ph-bold ph-plus"></i> เพิ่มนัดหมาย';
+            btn.className = "text-xs font-bold px-4 py-2.5 bg-purple-600 text-white hover:bg-purple-700 rounded-lg transition shadow-sm flex items-center gap-1.5";
+            document.getElementById('btn-cancel-apt').classList.add('hidden');
+            document.getElementById('apt-form-title').innerHTML = '<i class="ph-fill ph-plus-circle text-lg"></i> ลงคิวนัดหมายใหม่';
+        };
+
+        window.startEditAppointment = function(id) {
+            const p = window.currentPetAppointments.find(x => x.id === id);
+            if(!p) return;
+            
+            window.editingAptId = id;
+            document.getElementById('apt-date').value = p.date;
+            document.getElementById('apt-time').value = p.time || '';
+            document.getElementById('apt-reason').value = p.reason;
+
+            const btn = document.getElementById('btn-add-apt');
+            btn.innerHTML = '<i class="ph-bold ph-floppy-disk"></i> บันทึกการแก้ไข';
+            btn.className = "text-xs font-bold px-4 py-2.5 bg-amber-500 text-white hover:bg-amber-600 rounded-lg transition shadow-sm flex items-center gap-1.5";
+            document.getElementById('btn-cancel-apt').classList.remove('hidden');
+            document.getElementById('apt-form-title').innerHTML = '<i class="ph-fill ph-pencil-simple text-lg text-amber-500"></i> แก้ไขนัดหมาย';
+        };
+
         window.addAppointment = async function() {
             const date = document.getElementById('apt-date').value;
             const time = document.getElementById('apt-time').value;
@@ -862,50 +976,39 @@
             if(!date || !reason) return alert('กรุณาระบุวันที่และสาเหตุการนัดหมาย');
 
             const btn = document.getElementById('btn-add-apt');
+            const originalHtml = btn.innerHTML;
             btn.disabled = true;
             btn.innerHTML = '<i class="ph ph-spinner-gap animate-spin"></i> บันทึก...';
 
-            const newRecord = {
-                id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
-                date, time, reason,
-                createdAt: new Date().toISOString()
-            };
-
-            window.currentPetAppointments.push(newRecord);
+            let updatedList = [...window.currentPetAppointments];
+            
+            if(window.editingAptId) {
+                const idx = updatedList.findIndex(x => x.id === window.editingAptId);
+                if(idx !== -1) {
+                    updatedList[idx] = { ...updatedList[idx], date, time, reason };
+                }
+            } else {
+                updatedList.push({
+                    id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
+                    date, time, reason,
+                    createdAt: new Date().toISOString()
+                });
+            }
 
             try {
                 const safePid = window.currentProfilePetId.replace(/\//g, '_');
                 const petDocRef = doc(db, 'clinics', 'my-clinic', 'pets', safePid);
-                await setDoc(petDocRef, { appointments: window.currentPetAppointments }, { merge: true });
+                await setDoc(petDocRef, { appointments: updatedList }, { merge: true });
                 
-                document.getElementById('apt-reason').value = '';
-                document.getElementById('apt-time').value = '';
+                window.currentPetAppointments = updatedList;
+                window.cancelEditApt();
                 window.renderAppointments();
             } catch(e) {
                 console.error(e);
                 alert('เกิดข้อผิดพลาดในการบันทึกนัดหมาย');
-                window.currentPetAppointments.pop(); 
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = '<i class="ph-bold ph-floppy-disk"></i> บันทึกนัดหมาย';
-            }
-        };
-
-        window.deleteAppointment = async function(id) {
-            if(!confirm('ต้องการลบประวัตินัดหมายนี้ ใช่หรือไม่?')) return;
-            
-            const prevCopy = [...window.currentPetAppointments];
-            window.currentPetAppointments = window.currentPetAppointments.filter(p => p.id !== id);
-            
-            try {
-                const safePid = window.currentProfilePetId.replace(/\//g, '_');
-                const petDocRef = doc(db, 'clinics', 'my-clinic', 'pets', safePid);
-                await setDoc(petDocRef, { appointments: window.currentPetAppointments }, { merge: true });
-                window.renderAppointments();
-            } catch(e) {
-                console.error(e);
-                alert('ลบข้อมูลไม่สำเร็จ');
-                window.currentPetAppointments = prevCopy; 
+                if(!window.editingAptId) btn.innerHTML = originalHtml;
             }
         };
 
@@ -920,7 +1023,6 @@
                 return;
             }
 
-            // เรียงวันที่นัดเร็วสุดขึ้นบน
             const sorted = [...window.currentPetAppointments].sort((a,b) => new Date(a.date) - new Date(b.date));
             const today = new Date();
             today.setHours(0,0,0,0);
@@ -933,7 +1035,7 @@
                             <th class="px-4 py-3 font-bold">วันที่นัดหมาย</th>
                             <th class="px-4 py-3 font-bold">เวลา</th>
                             <th class="px-4 py-3 font-bold">สาเหตุ / รายการ</th>
-                            <th class="px-4 py-3 font-bold text-center w-10"></th>
+                            <th class="px-4 py-3 font-bold text-center w-20">จัดการ</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-100 bg-white">
@@ -966,9 +1068,12 @@
                         <td class="px-4 py-3.5 ${dateClass}">${dDisplay}${dateBadge}</td>
                         <td class="px-4 py-3.5 text-gray-500 font-medium">${p.time || '-'}</td>
                         <td class="px-4 py-3.5 font-bold text-gray-800">${p.reason}</td>
-                        <td class="px-4 py-3.5 text-center">
-                            <button onclick="window.deleteAppointment('${p.id}')" class="text-gray-300 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-full transition border border-transparent hover:border-red-200" title="ลบรายการนี้">
-                                <i class="ph-bold ph-trash text-base"></i>
+                        <td class="px-4 py-3.5 text-center flex justify-center gap-1">
+                            <button onclick="window.startEditAppointment('${p.id}')" class="text-gray-400 hover:text-blue-500 hover:bg-blue-50 p-1.5 rounded-lg transition border border-transparent hover:border-blue-200" title="แก้ไข">
+                                <i class="ph-bold ph-pencil-simple text-sm"></i>
+                            </button>
+                            <button onclick="window.openDeleteModal('${p.id}', 'appointment')" class="text-gray-400 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-lg transition border border-transparent hover:border-red-200" title="ลบรายการนี้">
+                                <i class="ph-bold ph-trash text-sm"></i>
                             </button>
                         </td>
                     </tr>
@@ -979,7 +1084,27 @@
             container.innerHTML = html;
         };
 
-        // --- ระบบตารางนัดหมายรวมของคลินิก (Global Appointments) ---
+        // --- ระบบตารางนัดหมายรวมของคลินิก (Global Appointments + Calendar) ---
+        window.switchGlobalView = function(view) {
+            const btnList = document.getElementById('btn-view-list');
+            const btnCal = document.getElementById('btn-view-cal');
+            const viewList = document.getElementById('globalAppointmentList');
+            const viewCal = document.getElementById('globalCalendarContainer');
+
+            if(view === 'list') {
+                btnList.className = "px-4 py-1.5 bg-white shadow-sm rounded-md text-xs font-bold text-gray-800 transition";
+                btnCal.className = "px-4 py-1.5 text-gray-500 rounded-md text-xs font-bold hover:text-gray-800 transition";
+                viewList.classList.remove('hidden');
+                viewCal.classList.add('hidden');
+            } else {
+                btnCal.className = "px-4 py-1.5 bg-white shadow-sm rounded-md text-xs font-bold text-gray-800 transition";
+                btnList.className = "px-4 py-1.5 text-gray-500 rounded-md text-xs font-bold hover:text-gray-800 transition";
+                viewCal.classList.remove('hidden');
+                viewList.classList.add('hidden');
+                window.renderCalendar();
+            }
+        };
+
         window.openGlobalAppointments = async function() {
             const modal = document.getElementById('globalAppointmentModal');
             modal.classList.remove('hidden');
@@ -989,16 +1114,14 @@
             listContainer.innerHTML = '<div class="text-center text-gray-400 py-10"><i class="ph ph-spinner-gap animate-spin text-3xl mb-2 text-blue-500"></i><p class="text-sm font-semibold">กำลังดึงข้อมูลนัดหมายคลินิก...</p></div>';
 
             try {
-                // ดึงข้อมูลสัตว์ทุกตัวที่มีใน Collection 'pets'
                 const petsSnap = await getDocs(collection(db, 'clinics', 'my-clinic', 'pets'));
                 let allTasks = [];
 
                 petsSnap.forEach(doc => {
                     const safePid = doc.id;
-                    const originalPid = safePid.replace(/_/g, '/'); // คืนค่า / กรณีที่มีใน ID
+                    const originalPid = safePid.replace(/_/g, '/');
                     const pData = doc.data();
 
-                    // หาชื่อและเบอร์โทรจาก allClinicLogs ที่โหลดไว้ตอนแรก
                     let petName = 'ไม่ทราบชื่อ';
                     let ownerPhone = '-';
                     let species = '';
@@ -1010,7 +1133,6 @@
                         species = logMatch.species;
                     }
 
-                    // ดึงนัดหมายทั่วไป
                     if (pData.appointments) {
                         pData.appointments.forEach(apt => {
                             allTasks.push({
@@ -1023,7 +1145,6 @@
                         });
                     }
                     
-                    // ดึงนัดหมายวัคซีน (เอาเฉพาะที่มี nextDue)
                     if (pData.preventives) {
                         pData.preventives.forEach(prev => {
                             if (prev.nextDue) {
@@ -1039,19 +1160,22 @@
                     }
                 });
 
+                window.globalTasks = allTasks;
                 const today = new Date();
                 today.setHours(0,0,0,0);
 
-                // เรียงลำดับวันที่ (อันที่ใกล้ถึง/เลยกำหนด ขึ้นก่อน)
-                allTasks.sort((a, b) => new Date(a.date) - new Date(b.date));
+                const sortedTasks = [...allTasks].sort((a, b) => new Date(a.date) - new Date(b.date));
 
-                if (allTasks.length === 0) {
+                if (sortedTasks.length === 0) {
                     listContainer.innerHTML = `
                         <div class="flex flex-col items-center justify-center p-12 bg-white border border-gray-200 rounded-2xl border-dashed">
                             <div class="w-16 h-16 bg-blue-50 text-blue-300 rounded-full flex items-center justify-center mb-4"><i class="ph-fill ph-calendar-check text-3xl"></i></div>
                             <h4 class="text-lg font-bold text-gray-800 mb-1">ยังไม่มีคิวนัดหมายในระบบ</h4>
                             <p class="text-sm font-semibold text-gray-400">คุณสามารถลงคิวนัดหมายได้ที่แฟ้มประวัติสัตว์ป่วยแต่ละตัว</p>
                         </div>`;
+                    if(!document.getElementById('globalCalendarContainer').classList.contains('hidden')){
+                        window.renderCalendar();
+                    }
                     return;
                 }
 
@@ -1070,7 +1194,7 @@
                         <tbody class="divide-y divide-gray-100">
                 `;
 
-                allTasks.forEach(task => {
+                sortedTasks.forEach(task => {
                     const taskDate = new Date(task.date);
                     taskDate.setHours(0,0,0,0);
                     const diffTime = taskDate - today;
@@ -1120,6 +1244,10 @@
                 html += `</tbody></table></div>`;
                 listContainer.innerHTML = html;
 
+                if(!document.getElementById('globalCalendarContainer').classList.contains('hidden')){
+                    window.renderCalendar();
+                }
+
             } catch (e) {
                 console.error("Error fetching global appointments:", e);
                 listContainer.innerHTML = `
@@ -1136,7 +1264,206 @@
             document.getElementById('globalAppointmentModal').classList.add('hidden');
         };
 
-        // --- ส่วนของการวาด DOM หลัก ---
+        // Calendar Logic
+        window.changeCalMonth = function(offset) {
+            window.currentCalDate.setMonth(window.currentCalDate.getMonth() + offset);
+            window.renderCalendar();
+        };
+
+        window.showCalDayDetails = function(dateStr) {
+            const dateObj = new Date(dateStr);
+            const displayTitle = dateObj.toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
+            document.getElementById('calSelectedDateTitle').innerHTML = `<i class="ph-fill ph-calendar-star"></i> รายการนัดหมายวันที่ ${displayTitle}`;
+            
+            const dayTasks = window.globalTasks.filter(t => t.date === dateStr);
+            const listContainer = document.getElementById('calSelectedTaskList');
+            
+            if(dayTasks.length === 0) {
+                listContainer.innerHTML = '<p class="text-xs text-gray-400 italic p-2 text-center">ไม่มีนัดหมายในวันนี้</p>';
+            } else {
+                let html = '';
+                dayTasks.forEach(task => {
+                    let typeIcon = task.type === 'preventive' ? '<i class="ph-fill ph-syringe text-teal-500"></i>' : '<i class="ph-fill ph-stethoscope text-purple-500"></i>';
+                    let timeStr = task.time ? `<span class="bg-gray-100 px-1.5 py-0.5 rounded text-gray-500 mr-1 font-semibold text-[10px] border border-gray-200">${task.time}</span>` : '';
+                    html += `
+                        <div onclick="window.closeGlobalAppointments(); window.openPatientProfile('${task.petId}');" class="flex justify-between items-center bg-white hover:bg-blue-50 p-3 rounded-xl border border-gray-200 cursor-pointer transition shadow-sm group">
+                            <div>
+                                <p class="text-sm font-bold text-gray-800 group-hover:text-blue-700 transition">${task.petName} <span class="text-[10px] text-gray-400 font-normal ml-1">(${task.petId})</span></p>
+                                <p class="text-xs text-gray-600 mt-1 flex items-center gap-1">${timeStr} ${typeIcon} <span class="font-medium">${task.reason}</span></p>
+                            </div>
+                            <div class="text-blue-500 bg-white rounded-full p-1.5 shadow-sm border border-blue-100 group-hover:bg-blue-600 group-hover:text-white transition-all flex items-center justify-center">
+                                <i class="ph-bold ph-caret-right text-sm"></i>
+                            </div>
+                        </div>
+                    `;
+                });
+                listContainer.innerHTML = `<div class="flex flex-col gap-2 pb-2">${html}</div>`;
+            }
+            document.getElementById('calSelectedDayDetails').classList.remove('hidden');
+        };
+
+        window.renderCalendar = function() {
+            const year = window.currentCalDate.getFullYear();
+            const month = window.currentCalDate.getMonth();
+            const monthNames = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+            
+            document.getElementById('calMonthYear').innerText = `${monthNames[month]} ${year + 543}`;
+            
+            const firstDay = new Date(year, month, 1).getDay(); // 0 = Sun
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const daysInPrevMonth = new Date(year, month, 0).getDate();
+            
+            const grid = document.getElementById('calendarGrid');
+            let html = '';
+            
+            const today = new Date();
+            const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+
+            // Previous month cells
+            for(let i = firstDay - 1; i >= 0; i--) {
+                html += `<div class="calendar-cell other-month"><span class="text-xs font-semibold">${daysInPrevMonth - i}</span></div>`;
+            }
+            
+            // Current month cells
+            for(let i = 1; i <= daysInMonth; i++) {
+                const currentStr = `${year}-${String(month+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
+                const isToday = currentStr === todayStr;
+                const dayTasks = window.globalTasks.filter(t => t.date === currentStr);
+                
+                let dayClass = "calendar-cell relative";
+                let numClass = "text-xs font-semibold w-6 h-6 flex items-center justify-center rounded-full mb-1";
+                if(isToday) numClass += " bg-blue-600 text-white shadow-sm";
+                else numClass += " text-gray-700";
+
+                let tasksHtml = '';
+                if(dayTasks.length > 0) {
+                    const aptCount = dayTasks.filter(t => t.type === 'appointment').length;
+                    const prevCount = dayTasks.filter(t => t.type === 'preventive').length;
+                    
+                    if(aptCount > 0) tasksHtml += `<div class="w-full bg-purple-100 text-purple-700 text-[9px] font-bold px-1 py-0.5 rounded truncate mb-0.5" title="${aptCount} นัดตรวจ">นัดตรวจ (${aptCount})</div>`;
+                    if(prevCount > 0) tasksHtml += `<div class="w-full bg-teal-100 text-teal-700 text-[9px] font-bold px-1 py-0.5 rounded truncate" title="${prevCount} วัคซีน">วัคซีน (${prevCount})</div>`;
+                }
+
+                html += `
+                    <div class="${dayClass}" onclick="window.showCalDayDetails('${currentStr}')">
+                        <div class="flex justify-end"><span class="${numClass}">${i}</span></div>
+                        <div class="flex flex-col gap-px">${tasksHtml}</div>
+                    </div>
+                `;
+            }
+
+            // Next month cells to fill grid
+            const totalCells = firstDay + daysInMonth;
+            let nextDays = 1;
+            while(totalCells % 7 !== 0 || nextDays <= (42 - totalCells)) {
+                if(nextDays > (42 - totalCells)) break; // stop at 6 rows
+                html += `<div class="calendar-cell other-month"><span class="text-xs font-semibold">${nextDays}</span></div>`;
+                nextDays++;
+            }
+
+            grid.innerHTML = html;
+        };
+
+        // --- ระบบ Custom Delete Modal (Unified) ---
+        window.openDeleteModal = function(id, type = 'log', extraParam = null) {
+            window.itemToDeleteType = type;
+            window.idToDelete = id;
+            window.updateIndexToDelete = (type === 'update') ? extraParam : null;
+            
+            const title = document.getElementById('deleteModalTitle');
+            const text = document.getElementById('deleteModalText');
+
+            if (type === 'update') {
+                title.innerText = "ยืนยันการลบอัปเดต";
+                text.innerHTML = "คุณแน่ใจหรือไม่ว่าต้องการลบอัปเดตนี้?<br>ข้อมูลที่ลบจะไม่สามารถกู้คืนได้";
+            } else if (type === 'preventive') {
+                title.innerText = "ยืนยันการลบรายการ";
+                text.innerHTML = "คุณแน่ใจหรือไม่ว่าต้องการลบวัคซีน/ยาป้องกันนี้?<br>ข้อมูลที่ลบจะไม่สามารถกู้คืนได้";
+            } else if (type === 'appointment') {
+                title.innerText = "ยืนยันการยกเลิกนัดหมาย";
+                text.innerHTML = "คุณแน่ใจหรือไม่ว่าต้องการลบรายการนัดหมายนี้?<br>ข้อมูลที่ลบจะไม่สามารถกู้คืนได้";
+            } else {
+                title.innerText = "ยืนยันการลบประวัติ";
+                text.innerHTML = "คุณแน่ใจหรือไม่ว่าต้องการลบประวัตินี้ทั้งหมด?<br>ข้อมูลที่ลบจะไม่สามารถกู้คืนได้";
+            }
+
+            const modal = document.getElementById('deleteModal');
+            const modalContent = document.getElementById('deleteModalContent');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95');
+                modalContent.classList.add('scale-100');
+            }, 10);
+        };
+
+        window.closeDeleteModal = function() {
+            window.itemToDeleteType = null;
+            window.idToDelete = null;
+            window.updateIndexToDelete = null;
+            
+            const modal = document.getElementById('deleteModal');
+            const modalContent = document.getElementById('deleteModalContent');
+            modalContent.classList.remove('scale-100');
+            modalContent.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.remove('flex');
+                modal.classList.add('hidden');
+            }, 200);
+        };
+
+        document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
+            if (!window.itemToDeleteType || !window.idToDelete) return;
+            
+            const btn = document.getElementById('confirmDeleteBtn');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="ph ph-spinner-gap animate-spin text-white"></i> ลบ...';
+            btn.disabled = true;
+
+            try {
+                if (window.itemToDeleteType === 'update') {
+                    const targetLog = petLogs.find(l => l.id === window.idToDelete);
+                    if (targetLog) {
+                        const currentUpdates = [...targetLog.updates];
+                        currentUpdates.splice(window.updateIndexToDelete, 1);
+                        const docRef = doc(db, 'clinics', 'my-clinic', 'petLogs', window.idToDelete);
+                        await updateDoc(docRef, { updates: currentUpdates });
+                        targetLog.updates = currentUpdates;
+                    }
+                    window.renderLogs();
+                } 
+                else if (window.itemToDeleteType === 'log') {
+                    await deleteDoc(doc(db, 'clinics', 'my-clinic', 'petLogs', window.idToDelete));
+                    petLogs = petLogs.filter(l => l.id !== window.idToDelete);
+                    window.allClinicLogs = window.allClinicLogs.filter(l => l.id !== window.idToDelete);
+                    window.renderLogs();
+                }
+                else if (window.itemToDeleteType === 'preventive') {
+                    const safePid = window.currentProfilePetId.replace(/\//g, '_');
+                    window.currentPetPreventives = window.currentPetPreventives.filter(p => p.id !== window.idToDelete);
+                    const petDocRef = doc(db, 'clinics', 'my-clinic', 'pets', safePid);
+                    await setDoc(petDocRef, { preventives: window.currentPetPreventives }, { merge: true });
+                    window.renderPreventives();
+                }
+                else if (window.itemToDeleteType === 'appointment') {
+                    const safePid = window.currentProfilePetId.replace(/\//g, '_');
+                    window.currentPetAppointments = window.currentPetAppointments.filter(p => p.id !== window.idToDelete);
+                    const petDocRef = doc(db, 'clinics', 'my-clinic', 'pets', safePid);
+                    await setDoc(petDocRef, { appointments: window.currentPetAppointments }, { merge: true });
+                    window.renderAppointments();
+                }
+                
+                window.closeDeleteModal();
+            } catch (error) {
+                console.error("Error deleting document: ", error);
+                alert("ลบข้อมูลไม่สำเร็จ");
+            } finally {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            }
+        });
+
+        // --- ส่วนวาดฟอร์ม Lab ---
         function createLabInputsHTML(prefix, id, values = {}) {
             const todayStr = new Date().toISOString().split('T')[0];
             const labDateVal = values.labDate || todayStr;
@@ -1174,6 +1501,89 @@
             `;
         }
 
+        // --- ส่วนระบบ AI ---
+        window.handleLabAnalysis = async function(event, id) {
+            const apiKey = localStorage.getItem('gemini_api_key');
+            if (!apiKey) {
+                window.openSettings(); 
+                return;
+            }
+
+            const file = event.target.files[0];
+            if (!file) return;
+
+            window.handleImageSelect(event, id);
+
+            const aiContextInput = document.getElementById(`ai-context-${id}`);
+            const aiContextText = aiContextInput ? aiContextInput.value.trim() : "";
+
+            const labBox = document.getElementById(`new-lab-${id}`);
+            const originalText = labBox.value;
+            
+            const aiBtnText = document.getElementById(`ai-btn-text-${id}`);
+            const aiLabel = document.getElementById(`ai-label-${id}`);
+            
+            if(aiBtnText) aiBtnText.innerHTML = '<i class="ph ph-spinner-gap animate-spin text-base"></i> กำลังอ่าน...';
+            if(aiLabel) aiLabel.classList.add('opacity-50', 'pointer-events-none');
+            
+            labBox.value = "✨ AI กำลังวิเคราะห์ผลแล็บจากรูปภาพและอาการ... กรุณารอสักครู่...";
+            labBox.disabled = true;
+            labBox.style.height = 'auto';
+            labBox.style.height = labBox.scrollHeight + 'px';
+
+            await new Promise(resolve => setTimeout(resolve, 50));
+
+            try {
+                const base64Data = await new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result.split(',')[1]);
+                    reader.onerror = error => reject(error);
+                    reader.readAsDataURL(file);
+                });
+                
+                const genAI = new GoogleGenerativeAI(apiKey);
+                let contextString = aiContextText ? `\n\nอาการเบื้องต้นของสัตว์ป่วย (Clinical Context): ${aiContextText}` : "";
+                
+                const prompt = `คุณคือผู้ช่วยสัตวแพทย์ผู้เชี่ยวชาญ นี่คือภาพใบรายงานผลการตรวจเลือด/ผลแล็บของสัตว์เลี้ยง${contextString}\nโปรดวิเคราะห์รูปภาพและข้อมูลอาการ(ถ้ามี) แล้วตอบกลับมาในรูปแบบที่กำหนดไว้อย่างเคร่งครัดดังนี้:\n**Diagnosis:**\n(สรุปความผิดปกติหลักเป็น Medical Term เป็น Bullet points เช่น - Mild Anemia, - Severe Leukocytosis)\n**Note:**\n(อธิบายกลไก สาเหตุ หรือ Differential Diagnosis ที่เป็นไปได้แบบสั้นๆ ให้สัตวแพทย์อ่าน โดยเชื่อมโยงกับอาการเบื้องต้นถ้ามี)\n**CE (Client Education):**\n(สร้างประโยคสำหรับพูดคุยอธิบายกับเจ้าของสัตว์ ด้วยภาษาที่เข้าใจง่าย เป็นมิตร ไม่ใช้ศัพท์แพทย์ซับซ้อน พร้อมคำแนะนำเบื้องต้น)\nหากในรูปไม่ใช่ผลแล็บ ให้ตอบเพียงแค่ 'ไม่พบข้อมูลผลแล็บในรูปภาพ'`;
+
+                const imagePart = { inlineData: { data: base64Data, mimeType: file.type } };
+                let result = null;
+                let lastError = null;
+                const modelsToTry = ["gemini-2.5-flash", "gemini-2.5-pro", "gemini-1.5-flash", "gemini-1.5-pro"];
+
+                for (const modelName of modelsToTry) {
+                    try {
+                        const model = genAI.getGenerativeModel({ model: modelName });
+                        result = await model.generateContent([prompt, imagePart]);
+                        if (result) break; 
+                    } catch (err) {
+                        lastError = err; 
+                    }
+                }
+
+                if (!result) throw lastError; 
+                const aiText = result.response.text();
+                labBox.value = (originalText ? originalText + "\n\n" : "") + aiText;
+                
+            } catch (error) {
+                console.error("AI Error:", error);
+                labBox.value = originalText; 
+                let errorMsg = "เกิดข้อผิดพลาดในการวิเคราะห์ AI:\n";
+                if (error && error.message) {
+                    if (error.message.includes("API key not valid")) errorMsg += "API Key ไม่ถูกต้อง";
+                    else errorMsg += error.message;
+                } else errorMsg += "ข้อผิดพลาดที่ไม่ทราบสาเหตุ";
+                alert(errorMsg);
+            } finally {
+                labBox.disabled = false;
+                labBox.style.height = 'auto';
+                labBox.style.height = labBox.scrollHeight + 'px';
+                if(aiBtnText) aiBtnText.innerHTML = '<i class="ph-fill ph-magic-wand text-base"></i> วิเคราะห์ผล';
+                if(aiLabel) aiLabel.classList.remove('opacity-50', 'pointer-events-none');
+            }
+        };
+
+        // --- ระบบวาด DOM หลักของ Log ---
         window.renderLogs = function() {
             const filterText = searchInput.value.toLowerCase();
             const filterType = typeFilter.value;
@@ -1255,7 +1665,7 @@
                                             <button onclick="window.toggleEditUpdate('${log.id}', ${index})" class="text-gray-400 hover:text-cozy-green bg-gray-50 rounded p-1 border border-gray-200" title="แก้ไข">
                                                 <i class="ph ph-pencil-simple text-sm"></i>
                                             </button>
-                                            <button onclick="window.openDeleteModal('${log.id}', true, ${index})" class="text-gray-400 hover:text-red-500 bg-gray-50 rounded p-1 border border-gray-200" title="ลบอัปเดต">
+                                            <button onclick="window.openDeleteModal('${log.id}', 'update', ${index})" class="text-gray-400 hover:text-red-500 bg-gray-50 rounded p-1 border border-gray-200" title="ลบอัปเดต">
                                                 <i class="ph ph-trash text-sm"></i>
                                             </button>
                                         </div>
@@ -1319,7 +1729,6 @@
                                         <textarea id="update-ce-${log.id}-${index}" rows="1" placeholder="Client Education (CE) / คำแนะนำ..." class="w-full text-[13px] font-medium text-gray-800 bg-gray-50 border border-gray-200 rounded-lg py-2.5 pr-3 pl-9 outline-none resize-none overflow-hidden placeholder:text-gray-400 transition focus:border-rose-400 focus:bg-white" oninput="this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px'">${updateCe}</textarea>
                                     </div>
 
-                                    <!-- Section กรอกค่าแล็บสำหรับแก้ไข -->
                                     <div class="mt-2">
                                         <button type="button" onclick="document.getElementById('edit-lab-grid-${log.id}-${index}').classList.toggle('hidden')" class="text-[11px] font-bold text-blue-600 bg-blue-50 px-2 py-1 rounded hover:bg-blue-100 transition"><i class="ph-bold ph-chart-line-up"></i> แก้ไขตัวเลขค่าเลือด (สำหรับกราฟ)</button>
                                         <div id="edit-lab-grid-${log.id}-${index}" class="hidden">
@@ -1379,7 +1788,6 @@
 
                 let ownerPhoneHtml = log.ownerPhone ? '<span class="flex items-center gap-1 border-l border-gray-300 pl-2"><i class="ph-fill ph-phone text-gray-400 text-sm"></i> ' + log.ownerPhone + '</span>' : '';
                 let emptyStateHtml = (log.updates && log.updates.length === 0) ? '<p class="text-xs font-medium text-gray-400 italic mb-3 ml-1">ยังไม่มีประวัติการอัปเดต...</p>' : '';
-
                 let ageStr = log.dob ? calculateAge(log.dob) : '';
                 let ageHtml = ageStr ? '<span class="flex items-center gap-1 text-gray-500"><i class="ph-fill ph-cake text-pink-400 text-sm"></i> อายุ: ' + ageStr + '</span>' : '';
 
@@ -1405,7 +1813,7 @@
                 return `
                     <div class="bg-white p-5 md:p-6 rounded-2xl border border-gray-200 shadow-sm relative group flex flex-col h-auto">
                         
-                        <button onclick="window.openDeleteModal('${log.id}')" class="absolute top-5 right-5 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all bg-white rounded-full p-1.5 border border-transparent hover:border-red-200 hover:bg-red-50" title="ลบข้อมูลเคสนี้">
+                        <button onclick="window.openDeleteModal('${log.id}', 'log')" class="absolute top-5 right-5 text-gray-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all bg-white rounded-full p-1.5 border border-transparent hover:border-red-200 hover:bg-red-50" title="ลบข้อมูลเคสนี้">
                             <i class="ph ph-trash text-lg"></i>
                         </button>
                         
@@ -1442,7 +1850,6 @@
                                 </span>
                             </div>
                             
-                            <!-- Chief Complaint Box -->
                             <div class="bg-[#F7F8F5] rounded-xl p-4 mb-5 border border-[#E5E7E1]">
                                 <p class="text-[11px] font-bold text-gray-500 mb-2 flex items-center gap-1.5 uppercase tracking-wide">
                                     <i class="ph-fill ph-warning-circle text-sm text-gray-400"></i> อาการสำคัญ (Chief Complaint)
@@ -1451,7 +1858,7 @@
                             </div>
                         </div>
 
-                        <!-- ส่วนแก้ไขข้อมูลทั่วไป (ซ่อนไว้) -->
+                        <!-- ส่วนแก้ไขข้อมูลทั่วไป -->
                         <div id="log-header-edit-${log.id}" class="hidden mb-5 bg-gray-50 p-4 rounded-xl border border-gray-200">
                             <h4 class="text-sm font-bold text-gray-700 mb-3 flex items-center gap-1.5"><i class="ph-fill ph-pencil-simple text-blue-500"></i> แก้ไขข้อมูลสัตว์ป่วย</h4>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
@@ -1586,227 +1993,6 @@
             logsContainer.innerHTML = logsHtmlArray.join('');
         };
 
-        window.pendingImages = {};
-        window.pendingEditImages = {};
-        window.removedEditImages = {};
-
-        window.compressImage = function(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = event => {
-                    const img = new Image();
-                    img.src = event.target.result;
-                    img.onload = () => {
-                        const canvas = document.createElement('canvas');
-                        const MAX_WIDTH = 800; 
-                        const MAX_HEIGHT = 800;
-                        let width = img.width; 
-                        let height = img.height;
-                        
-                        if (width > height) { 
-                            if (width > MAX_WIDTH) { 
-                                height = Math.round(height * MAX_WIDTH / width); 
-                                width = MAX_WIDTH; 
-                            } 
-                        } else { 
-                            if (height > MAX_HEIGHT) { 
-                                width = Math.round(width * MAX_HEIGHT / height); 
-                                height = MAX_HEIGHT; 
-                            } 
-                        }
-                        
-                        canvas.width = width; 
-                        canvas.height = height;
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(img, 0, 0, width, height);
-                        resolve(canvas.toDataURL('image/jpeg', 0.8));
-                    };
-                    img.onerror = error => reject(error);
-                };
-                reader.onerror = error => reject(error);
-            });
-        };
-
-        window.handleImageSelect = function(event, id) {
-            const file = event.target.files[0];
-            if (file) {
-                window.pendingImages[id] = file;
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    document.getElementById(`preview-image-${id}`).src = e.target.result;
-                    document.getElementById(`preview-container-${id}`).classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            }
-        };
-
-        window.removePreview = function(id) {
-            delete window.pendingImages[id];
-            document.getElementById(`preview-container-${id}`).classList.add('hidden');
-            
-            const fileInput = document.getElementById(`file-upload-${id}`); 
-            if(fileInput) fileInput.value = '';
-            
-            const labInput = document.getElementById(`lab-upload-${id}`); 
-            if(labInput) labInput.value = '';
-            
-            const aiContextInput = document.getElementById(`ai-context-${id}`); 
-            if(aiContextInput) aiContextInput.value = '';
-        };
-
-        window.handleLabAnalysis = async function(event, id) {
-            const apiKey = localStorage.getItem('gemini_api_key');
-            if (!apiKey) {
-                window.openSettings(); 
-                return;
-            }
-
-            const file = event.target.files[0];
-            if (!file) return;
-
-            window.handleImageSelect(event, id);
-
-            const aiContextInput = document.getElementById(`ai-context-${id}`);
-            const aiContextText = aiContextInput ? aiContextInput.value.trim() : "";
-
-            const labBox = document.getElementById(`new-lab-${id}`);
-            const originalText = labBox.value;
-            
-            const aiBtnText = document.getElementById(`ai-btn-text-${id}`);
-            const aiLabel = document.getElementById(`ai-label-${id}`);
-            
-            if(aiBtnText) aiBtnText.innerHTML = '<i class="ph ph-spinner-gap animate-spin text-base"></i> กำลังอ่าน...';
-            if(aiLabel) aiLabel.classList.add('opacity-50', 'pointer-events-none');
-            
-            labBox.value = "✨ AI กำลังวิเคราะห์ผลแล็บจากรูปภาพและอาการ... กรุณารอสักครู่...";
-            labBox.disabled = true;
-            labBox.style.height = 'auto';
-            labBox.style.height = labBox.scrollHeight + 'px';
-
-            await new Promise(resolve => setTimeout(resolve, 50));
-
-            try {
-                const base64Data = await new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onload = () => resolve(reader.result.split(',')[1]);
-                    reader.onerror = error => reject(error);
-                    reader.readAsDataURL(file);
-                });
-                
-                const genAI = new GoogleGenerativeAI(apiKey);
-                let contextString = aiContextText ? `\n\nอาการเบื้องต้นของสัตว์ป่วย (Clinical Context): ${aiContextText}` : "";
-                
-                const prompt = `คุณคือผู้ช่วยสัตวแพทย์ผู้เชี่ยวชาญ นี่คือภาพใบรายงานผลการตรวจเลือด/ผลแล็บของสัตว์เลี้ยง${contextString}\nโปรดวิเคราะห์รูปภาพและข้อมูลอาการ(ถ้ามี) แล้วตอบกลับมาในรูปแบบที่กำหนดไว้อย่างเคร่งครัดดังนี้:\n**Diagnosis:**\n(สรุปความผิดปกติหลักเป็น Medical Term เป็น Bullet points เช่น - Mild Anemia, - Severe Leukocytosis)\n**Note:**\n(อธิบายกลไก สาเหตุ หรือ Differential Diagnosis ที่เป็นไปได้แบบสั้นๆ ให้สัตวแพทย์อ่าน โดยเชื่อมโยงกับอาการเบื้องต้นถ้ามี)\n**CE (Client Education):**\n(สร้างประโยคสำหรับพูดคุยอธิบายกับเจ้าของสัตว์ ด้วยภาษาที่เข้าใจง่าย เป็นมิตร ไม่ใช้ศัพท์แพทย์ซับซ้อน พร้อมคำแนะนำเบื้องต้น)\nหากในรูปไม่ใช่ผลแล็บ ให้ตอบเพียงแค่ 'ไม่พบข้อมูลผลแล็บในรูปภาพ'`;
-
-                const imagePart = {
-                    inlineData: {
-                        data: base64Data,
-                        mimeType: file.type
-                    }
-                };
-
-                let result = null;
-                let lastError = null;
-                const modelsToTry = ["gemini-2.5-flash", "gemini-2.5-pro", "gemini-1.5-flash", "gemini-1.5-pro"];
-
-                for (const modelName of modelsToTry) {
-                    try {
-                        const model = genAI.getGenerativeModel({ model: modelName });
-                        result = await model.generateContent([prompt, imagePart]);
-                        if (result) break; 
-                    } catch (err) {
-                        lastError = err; 
-                    }
-                }
-
-                if (!result) throw lastError; 
-
-                const aiText = result.response.text();
-                labBox.value = (originalText ? originalText + "\n\n" : "") + aiText;
-                
-            } catch (error) {
-                console.error("AI Error:", error);
-                labBox.value = originalText; 
-                
-                let errorMsg = "เกิดข้อผิดพลาดในการวิเคราะห์ AI:\n";
-                if (error && error.message) {
-                    if (error.message.includes("API key not valid")) {
-                        errorMsg += "API Key ไม่ถูกต้อง";
-                    } else {
-                        errorMsg += error.message;
-                    }
-                } else {
-                    errorMsg += "ข้อผิดพลาดที่ไม่ทราบสาเหตุ";
-                }
-                alert(errorMsg);
-            } finally {
-                labBox.disabled = false;
-                labBox.style.height = 'auto';
-                labBox.style.height = labBox.scrollHeight + 'px';
-                
-                if(aiBtnText) aiBtnText.innerHTML = '<i class="ph-fill ph-magic-wand text-base"></i> วิเคราะห์ผล';
-                if(aiLabel) aiLabel.classList.remove('opacity-50', 'pointer-events-none');
-            }
-        };
-
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const btn = document.getElementById('submitBtn');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="ph ph-spinner-gap animate-spin text-lg text-white"></i> <span>กำลังบันทึก...</span>';
-            btn.disabled = true;
-
-            const newLog = {
-                petId: document.getElementById('petId').value,
-                petName: document.getElementById('petName').value,
-                species: document.getElementById('species').value,
-                dob: document.getElementById('dob').value,
-                ownerPhone: document.getElementById('ownerPhone').value,
-                date: document.getElementById('date').value,
-                symptoms: document.getElementById('symptoms').value,
-                caseType: document.querySelector('input[name="caseType"]:checked').value,
-                updates: [],
-                isDischarged: false, 
-                dischargeDate: null,
-                createdAt: new Date().toISOString()
-            };
-
-            try {
-                const newDocRef = doc(logsRef); 
-                await setDoc(newDocRef, newLog);
-                
-                const completeNewLog = { id: newDocRef.id, ...newLog };
-                petLogs.unshift(completeNewLog);
-                petLogs.sort((a, b) => {
-                    if (a.date !== b.date) return new Date(b.date) - new Date(a.date);
-                    return new Date(b.createdAt) - new Date(a.createdAt);
-                });
-                
-                window.allClinicLogs.unshift(completeNewLog);
-                
-                form.reset();
-                document.getElementById('date').valueAsDate = new Date();
-                document.querySelector('input[name="caseType"][value="OPD"]').checked = true;
-                document.getElementById('petSearchStatus').classList.add('hidden');
-                
-                window.renderLogs();
-                
-            } catch (error) {
-                console.error("Error adding document: ", error);
-                alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล: " + error.message);
-            } finally {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-            }
-        });
-
-        const getLabNum = (prefix, field, id) => {
-            const el = document.getElementById(`${prefix}-${field}-${id}`);
-            if (!el || el.value === '') return null;
-            return parseFloat(el.value);
-        };
-
         window.submitInlineUpdate = async function(id) {
             const getVal = (field) => {
                 const element = document.getElementById(`new-${field}-${id}`);
@@ -1918,41 +2104,6 @@
             }
         };
 
-        window.handleEditImageSelect = function(event, id, index) {
-            const file = event.target.files[0];
-            if (file) {
-                window.pendingEditImages[`${id}-${index}`] = file;
-                window.removedEditImages[`${id}-${index}`] = false;
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    document.getElementById(`edit-preview-image-${id}-${index}`).src = e.target.result;
-                    document.getElementById(`edit-preview-container-${id}-${index}`).classList.remove('hidden');
-                };
-                reader.readAsDataURL(file);
-            }
-        };
-
-        window.removeEditPreview = function(id, index) {
-            delete window.pendingEditImages[`${id}-${index}`];
-            window.removedEditImages[`${id}-${index}`] = true;
-            document.getElementById(`edit-preview-container-${id}-${index}`).classList.add('hidden');
-            document.getElementById(`edit-file-upload-${id}-${index}`).value = '';
-        };
-
-        window.toggleEditUpdate = function(id, index) {
-            document.getElementById(`update-display-${id}-${index}`).classList.add('hidden');
-            document.getElementById(`update-edit-${id}-${index}`).classList.remove('hidden');
-            
-            const fields = ['textarea', 'pe', 'ddx', 'dx', 'treatment', 'lab', 'ce'];
-            fields.forEach(field => {
-                const el = document.getElementById(`update-${field}-${id}-${index}`);
-                if(el) {
-                    el.style.height = 'auto';
-                    el.style.height = el.scrollHeight + 'px';
-                }
-            });
-        };
-
         window.cancelEditUpdate = function(id, index) {
             delete window.pendingEditImages[`${id}-${index}`];
             delete window.removedEditImages[`${id}-${index}`];
@@ -2051,383 +2202,6 @@
                 btn.innerHTML = originalBtnHtml;
                 btn.disabled = false;
             }
-        };
-
-        window.openChartModal = function(id) {
-            const log = petLogs.find(l => l.id === id);
-            if (!log || !log.updates) return;
-
-            const chartModal = document.getElementById('chartModal');
-            chartModal.classList.remove('hidden');
-            chartModal.classList.add('flex');
-
-            const updatesWithLab = log.updates.filter(u => u.labData && Object.keys(u.labData).some(k => k !== 'labDate' && u.labData[k] !== null && u.labData[k] !== ''));
-            
-            const labels = [];
-            const data = { hct: [], mcv: [], mchc: [], wbc: [], neu_count: [], lym_count: [], mono_count: [], eos_count: [], baso_count: [], plt: [], bun: [], creat: [], alt: [], ast: [], alp: [] };
-
-            const sortedUpdates = [...updatesWithLab].sort((a, b) => {
-                const dateA = (a.labData && a.labData.labDate) ? a.labData.labDate : "9999-99-99";
-                const dateB = (b.labData && b.labData.labDate) ? b.labData.labDate : "9999-99-99";
-                if(dateA !== dateB) return dateA.localeCompare(dateB);
-                return 0;
-            });
-
-            sortedUpdates.forEach(u => {
-                let dateLabel = 'N/A';
-                if (u.labData && u.labData.labDate) {
-                    const d = new Date(u.labData.labDate);
-                    if (!isNaN(d)) {
-                        dateLabel = d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' });
-                    }
-                } else if (u.timestamp) {
-                    dateLabel = u.timestamp.split(',')[0];
-                }
-                labels.push(dateLabel);
-
-                data.hct.push(u.labData.hct);
-                data.mcv.push(u.labData.mcv);
-                data.mchc.push(u.labData.mchc);
-                
-                data.wbc.push(u.labData.wbc);
-                data.neu_count.push(u.labData.neu_count);
-                data.lym_count.push(u.labData.lym_count);
-                data.mono_count.push(u.labData.mono_count);
-                data.eos_count.push(u.labData.eos_count);
-                data.baso_count.push(u.labData.baso_count);
-                data.plt.push(u.labData.plt);
-                
-                data.bun.push(u.labData.bun);
-                data.creat.push(u.labData.creat);
-                data.alt.push(u.labData.alt);
-                data.ast.push(u.labData.ast);
-                data.alp.push(u.labData.alp);
-            });
-
-            activeCharts.forEach(chart => chart.destroy());
-            activeCharts = [];
-
-            const commonOptions = {
-                responsive: true,
-                maintainAspectRatio: false,
-                spanGaps: true, 
-                interaction: { mode: 'index', intersect: false },
-                plugins: { 
-                    legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 8, padding: 20, font: { family: 'Inter, Noto Sans Thai' } } },
-                    tooltip: {
-                        backgroundColor: 'rgba(255, 255, 255, 0.98)',
-                        titleColor: '#1f2937', bodyColor: '#4b5563', borderColor: '#e5e7eb',
-                        borderWidth: 1, padding: 12, boxPadding: 6, usePointStyle: true,
-                        titleFont: { size: 13, family: 'Inter, Noto Sans Thai', weight: 'bold' },
-                        bodyFont: { size: 12, family: 'Inter, Noto Sans Thai' }
-                    }
-                },
-                scales: {
-                    x: { grid: { display: false }, ticks: { font: { family: 'Inter' } } },
-                    y: { border: { dash: [4, 4], display: false }, grid: { color: '#f3f4f6' }, ticks: { font: { family: 'Inter' } } }
-                }
-            };
-
-            const ctxRBC = document.getElementById('chart-rbc').getContext('2d');
-            activeCharts.push(new Chart(ctxRBC, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        { label: 'Hct (%)', data: data.hct, borderColor: '#ef4444', backgroundColor: '#ef4444', borderWidth: 3.5, tension: 0.3, pointRadius: 4, pointHoverRadius: 6 },
-                        { label: 'MCV (fL)', data: data.mcv, borderColor: '#ea580c', backgroundColor: '#ea580c', borderWidth: 2.5, tension: 0.3, pointRadius: 4 },
-                        { label: 'MCHC (g/dL)', data: data.mchc, borderColor: '#9a3412', backgroundColor: '#9a3412', borderWidth: 2.5, tension: 0.3, pointRadius: 4 }
-                    ]
-                },
-                options: commonOptions
-            }));
-
-            const ctxWBC = document.getElementById('chart-wbc').getContext('2d');
-            activeCharts.push(new Chart(ctxWBC, {
-                data: {
-                    labels: labels,
-                    datasets: [
-                        { type: 'line', label: 'WBC Total (x10³)', data: data.wbc, borderColor: '#081d43', backgroundColor: '#081d43', borderWidth: 3.5, tension: 0.3, pointRadius: 5, pointHoverRadius: 7, order: 0 },
-                        { type: 'bar', label: 'Neu (count)', data: data.neu_count, backgroundColor: '#1e3a8a', stack: 'Stack 0', borderRadius: 4, order: 1 },
-                        { type: 'bar', label: 'Lym (count)', data: data.lym_count, backgroundColor: '#2563eb', stack: 'Stack 0', borderRadius: 4, order: 2 },
-                        { type: 'bar', label: 'Mono (count)', data: data.mono_count, backgroundColor: '#3b82f6', stack: 'Stack 0', borderRadius: 4, order: 3 },
-                        { type: 'bar', label: 'Eos (count)', data: data.eos_count, backgroundColor: '#60a5fa', stack: 'Stack 0', borderRadius: 4, order: 4 },
-                        { type: 'bar', label: 'Baso (count)', data: data.baso_count, backgroundColor: '#93c5fd', stack: 'Stack 0', borderRadius: 4, order: 5 }
-                    ]
-                },
-                options: {
-                    ...commonOptions,
-                    scales: {
-                        x: { ...commonOptions.scales.x, stacked: true },
-                        y: { ...commonOptions.scales.y, title: { display: true, text: 'Count (x10³)', font: { family: 'Inter', size: 11 } } }
-                    }
-                }
-            }));
-
-            const ctxPLT = document.getElementById('chart-plt').getContext('2d');
-            activeCharts.push(new Chart(ctxPLT, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        { label: 'PLT (x10³)', data: data.plt, borderColor: '#0d9488', backgroundColor: '#0d9488', borderWidth: 3.5, tension: 0.3, pointRadius: 4, pointHoverRadius: 6 }
-                    ]
-                },
-                options: {
-                    ...commonOptions,
-                    scales: {
-                        ...commonOptions.scales,
-                        y: { ...commonOptions.scales.y, title: { display: true, text: 'PLT (x10³)', font: { family: 'Inter', size: 11 } } }
-                    }
-                }
-            }));
-
-            const ctxLiver = document.getElementById('chart-liver').getContext('2d');
-            activeCharts.push(new Chart(ctxLiver, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        { label: 'ALT (U/L)', data: data.alt, borderColor: '#16a34a', backgroundColor: '#16a34a', borderWidth: 3.5, tension: 0.3, pointRadius: 4, pointHoverRadius: 6 },
-                        { label: 'AST (U/L)', data: data.ast, borderColor: '#15803d', backgroundColor: '#15803d', borderWidth: 2.5, borderDash: [4, 4], tension: 0.3, pointRadius: 4 },
-                        { label: 'ALP (U/L)', data: data.alp, borderColor: '#14532d', backgroundColor: '#14532d', borderWidth: 2.5, tension: 0.3, pointRadius: 4 }
-                    ]
-                },
-                options: {
-                    ...commonOptions,
-                    scales: {
-                        ...commonOptions.scales,
-                        y: { ...commonOptions.scales.y, title: { display: true, text: 'Enzymes (U/L)', font: { family: 'Inter', size: 11 } } }
-                    }
-                }
-            }));
-
-            const ctxKidney = document.getElementById('chart-kidney').getContext('2d');
-            activeCharts.push(new Chart(ctxKidney, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        { label: 'BUN (mg/dL)', data: data.bun, borderColor: '#f59e0b', backgroundColor: '#f59e0b', yAxisID: 'y', borderWidth: 3.5, tension: 0.3, pointRadius: 4, pointHoverRadius: 6 },
-                        { label: 'Creatinine (mg/dL)', data: data.creat, borderColor: '#b45309', backgroundColor: '#b45309', yAxisID: 'y1', borderWidth: 3.5, tension: 0.3, pointRadius: 4, pointHoverRadius: 6 }
-                    ]
-                },
-                options: {
-                    ...commonOptions,
-                    scales: {
-                        x: commonOptions.scales.x,
-                        y: { ...commonOptions.scales.y, type: 'linear', display: true, position: 'left', title: { display: true, text: 'BUN (mg/dL)', font: { family: 'Inter', size: 11 } } },
-                        y1: { ...commonOptions.scales.y, type: 'linear', display: true, position: 'right', title: { display: true, text: 'Creatinine (mg/dL)', font: { family: 'Inter', size: 11 } }, grid: { drawOnChartArea: false } }
-                    }
-                }
-            }));
-        };
-
-        window.closeChartModal = function() {
-            document.getElementById('chartModal').classList.remove('flex');
-            document.getElementById('chartModal').classList.add('hidden');
-        };
-
-        window.toggleDischarge = async function(id, isChecked) {
-            try {
-                const docRef = doc(db, 'clinics', 'my-clinic', 'petLogs', id);
-                let updateData = { isDischarged: isChecked };
-                
-                if (isChecked) {
-                    const now = new Date();
-                    updateData.dischargeDate = now.toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' }) + ' ' + 
-                                               now.toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.';
-                } else {
-                    updateData.dischargeDate = null;
-                }
-
-                await updateDoc(docRef, updateData);
-                
-                const targetLog = petLogs.find(l => l.id === id);
-                targetLog.isDischarged = isChecked;
-                targetLog.dischargeDate = updateData.dischargeDate;
-                window.renderLogs();
-                
-            } catch (error) {
-                console.error("Error updating discharge status: ", error);
-            }
-        };
-
-        const modal = document.getElementById('deleteModal');
-        const modalContent = document.getElementById('deleteModalContent');
-        
-        window.openDeleteModal = function(id, isUpdate = false, index = null) {
-            logIdToDelete = id;
-            updateIndexToDelete = isUpdate ? index : null;
-            
-            const title = document.getElementById('deleteModalTitle');
-            const text = document.getElementById('deleteModalText');
-
-            if (isUpdate) {
-                title.innerText = "ยืนยันการลบอัปเดต";
-                text.innerHTML = "คุณแน่ใจหรือไม่ว่าต้องการลบอัปเดตนี้?<br>ข้อมูลที่ลบจะไม่สามารถกู้คืนได้";
-            } else {
-                title.innerText = "ยืนยันการลบประวัติ";
-                text.innerHTML = "คุณแน่ใจหรือไม่ว่าต้องการลบประวัตินี้ทั้งหมด?<br>ข้อมูลที่ลบจะไม่สามารถกู้คืนได้";
-            }
-
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            setTimeout(() => {
-                modalContent.classList.remove('scale-95');
-                modalContent.classList.add('scale-100');
-            }, 10);
-        };
-
-        window.closeDeleteModal = function() {
-            logIdToDelete = null;
-            updateIndexToDelete = null;
-            modalContent.classList.remove('scale-100');
-            modalContent.classList.add('scale-95');
-            setTimeout(() => {
-                modal.classList.remove('flex');
-                modal.classList.add('hidden');
-            }, 200);
-        };
-
-        window.toggleEditLog = function(id) {
-            document.getElementById(`log-header-display-${id}`).classList.add('hidden');
-            document.getElementById(`log-header-edit-${id}`).classList.remove('hidden');
-        };
-
-        window.cancelEditLog = function(id) {
-            document.getElementById(`log-header-edit-${id}`).classList.add('hidden');
-            document.getElementById(`log-header-display-${id}`).classList.remove('hidden');
-        };
-
-        window.saveEditLog = async function(id) {
-            const newName = document.getElementById(`edit-petName-${id}`).value.trim();
-            const newPhone = document.getElementById(`edit-ownerPhone-${id}`).value.trim();
-            const newSpecies = document.getElementById(`edit-species-${id}`).value;
-            const newDob = document.getElementById(`edit-dob-${id}`).value;
-            const newSymptoms = document.getElementById(`edit-symptoms-${id}`).value.trim();
-
-            if (!newName) return alert("กรุณาใส่ชื่อสัตว์เลี้ยง");
-
-            const btn = document.getElementById(`save-log-btn-${id}`);
-            const originalHtml = btn.innerHTML;
-            btn.innerHTML = 'บันทึก...'; 
-            btn.disabled = true;
-
-            try {
-                const docRef = doc(db, 'clinics', 'my-clinic', 'petLogs', id);
-                await updateDoc(docRef, {
-                    petName: newName,
-                    ownerPhone: newPhone,
-                    species: newSpecies,
-                    dob: newDob,
-                    symptoms: newSymptoms
-                });
-
-                const targetLog = petLogs.find(l => l.id === id);
-                targetLog.petName = newName;
-                targetLog.ownerPhone = newPhone;
-                targetLog.species = newSpecies;
-                targetLog.dob = newDob;
-                targetLog.symptoms = newSymptoms;
-
-                window.renderLogs();
-            } catch (error) {
-                console.error("Error editing log: ", error);
-                alert("เกิดข้อผิดพลาดในการบันทึกข้อมูล");
-            } finally {
-                btn.innerHTML = originalHtml; 
-                btn.disabled = false;
-            }
-        };
-
-        document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
-            if (logIdToDelete) {
-                const btn = document.getElementById('confirmDeleteBtn');
-                const originalText = btn.innerHTML;
-                btn.innerHTML = '<i class="ph ph-spinner-gap animate-spin text-white"></i> ลบ...';
-                btn.disabled = true;
-
-                try {
-                    if (updateIndexToDelete !== null) {
-                        const targetLog = petLogs.find(l => l.id === logIdToDelete);
-                        if (targetLog) {
-                            const currentUpdates = [...targetLog.updates];
-                            currentUpdates.splice(updateIndexToDelete, 1);
-                            const docRef = doc(db, 'clinics', 'my-clinic', 'petLogs', logIdToDelete);
-                            await updateDoc(docRef, { updates: currentUpdates });
-                            
-                            targetLog.updates = currentUpdates;
-                        }
-                    } else {
-                        await deleteDoc(doc(db, 'clinics', 'my-clinic', 'petLogs', logIdToDelete));
-                        petLogs = petLogs.filter(l => l.id !== logIdToDelete);
-                    }
-                    window.closeDeleteModal();
-                    window.renderLogs();
-                } catch (error) {
-                    console.error("Error deleting document: ", error);
-                    alert("ลบข้อมูลไม่สำเร็จ");
-                } finally {
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                }
-            }
-        });
-
-        const aiModal = document.getElementById('aiSettingsModal');
-        const aiModalContent = document.getElementById('aiSettingsModalContent');
-
-        window.openSettings = function() {
-            aiModal.classList.remove('hidden');
-            aiModal.classList.add('flex');
-            setTimeout(() => {
-                aiModalContent.classList.remove('scale-95');
-                aiModalContent.classList.add('scale-100');
-            }, 10);
-        };
-
-        window.closeSettings = function() {
-            aiModalContent.classList.remove('scale-100');
-            aiModalContent.classList.add('scale-95');
-            setTimeout(() => {
-                aiModal.classList.remove('flex');
-                aiModal.classList.add('hidden');
-            }, 200);
-        };
-
-        window.saveSettings = function() {
-            const key = document.getElementById('geminiApiKey').value.trim();
-            if (key) {
-                localStorage.setItem('gemini_api_key', key);
-                alert("บันทึก API Key เรียบร้อยแล้ว สามารถใช้งาน AI วิเคราะห์ผลแล็บได้ทันที");
-            } else {
-                localStorage.removeItem('gemini_api_key');
-            }
-            window.closeSettings();
-        };
-
-        const imageModal = document.getElementById('imageModal');
-        const imageModalContent = document.getElementById('imageModalContent');
-
-        window.openImageModal = function(url) {
-            imageModalContent.src = url;
-            imageModal.classList.remove('hidden');
-            imageModal.classList.add('flex');
-            setTimeout(() => {
-                imageModalContent.classList.remove('scale-95');
-                imageModalContent.classList.add('scale-100');
-            }, 10);
-        };
-
-        window.closeImageModal = function() {
-            imageModalContent.classList.remove('scale-100');
-            imageModalContent.classList.add('scale-95');
-            setTimeout(() => {
-                imageModal.classList.remove('flex');
-                imageModal.classList.add('hidden');
-                setTimeout(() => { imageModalContent.src = ''; }, 100);
-            }, 200);
         };
 
     </script>
